@@ -77,10 +77,7 @@ class _AdminDashboardState extends State<AdminDashboard>
                 child: Container(
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        Color(0xFFE0F7F4),
-                        Color(0xFFF8FFFE),
-                      ],
+                      colors: [Color(0xFFE0F7F4), Color(0xFFF8FFFE)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -90,7 +87,9 @@ class _AdminDashboardState extends State<AdminDashboard>
               Positioned.fill(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 16),
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -195,23 +194,23 @@ class _AdminDashboardState extends State<AdminDashboard>
 
             return wide
                 ? Row(
-              children: [
-                Expanded(child: children[0]),
-                const SizedBox(width: 12),
-                Expanded(child: children[1]),
-                const SizedBox(width: 12),
-                Expanded(child: children[2]),
-              ],
-            )
+                    children: [
+                      Expanded(child: children[0]),
+                      const SizedBox(width: 12),
+                      Expanded(child: children[1]),
+                      const SizedBox(width: 12),
+                      Expanded(child: children[2]),
+                    ],
+                  )
                 : Column(
-              children: [
-                children[0],
-                const SizedBox(height: 12),
-                children[1],
-                const SizedBox(height: 12),
-                children[2],
-              ],
-            );
+                    children: [
+                      children[0],
+                      const SizedBox(height: 12),
+                      children[1],
+                      const SizedBox(height: 12),
+                      children[2],
+                    ],
+                  );
           },
         );
       },
@@ -234,8 +233,7 @@ class _AdminDashboardState extends State<AdminDashboard>
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             height: 110,
-            padding:
-            const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
             decoration: BoxDecoration(
               gradient: gradient,
               boxShadow: [
@@ -283,8 +281,11 @@ class _AdminDashboardState extends State<AdminDashboard>
                     ],
                   ),
                 ),
-                const Icon(Icons.arrow_forward_ios,
-                    color: Colors.white, size: 18),
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.white,
+                  size: 18,
+                ),
               ],
             ),
           ),
@@ -308,9 +309,10 @@ class _AdminDashboardState extends State<AdminDashboard>
                   const Text(
                     'Overall Participation',
                     style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.teal),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.teal,
+                    ),
                   ),
                   const Spacer(),
                   SizedBox(
@@ -355,9 +357,10 @@ class _AdminDashboardState extends State<AdminDashboard>
               Text(
                 'Event Type Distribution',
                 style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.teal),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.teal,
+                ),
               ),
               SizedBox(height: 12),
               SizedBox(height: 220, child: _EventTypePieChart()),
@@ -367,20 +370,20 @@ class _AdminDashboardState extends State<AdminDashboard>
 
         return wide
             ? Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: lineChartCard),
-            const SizedBox(width: 16),
-            Expanded(child: pieChartCard),
-          ],
-        )
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: lineChartCard),
+                  const SizedBox(width: 16),
+                  Expanded(child: pieChartCard),
+                ],
+              )
             : Column(
-          children: [
-            lineChartCard,
-            const SizedBox(height: 16),
-            pieChartCard,
-          ],
-        );
+                children: [
+                  lineChartCard,
+                  const SizedBox(height: 16),
+                  pieChartCard,
+                ],
+              );
       },
     );
   }
@@ -395,9 +398,10 @@ class _AdminDashboardState extends State<AdminDashboard>
           Text(
             'Top 5 Participants',
             style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.teal),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.teal,
+            ),
           ),
           SizedBox(height: 10),
           _TopFiveLeaderboard(),
@@ -412,9 +416,10 @@ class _AdminDashboardState extends State<AdminDashboard>
           Text(
             'Recent Activities',
             style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.teal),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.teal,
+            ),
           ),
           SizedBox(height: 10),
           _RecentActivitiesPanel(),
@@ -427,20 +432,20 @@ class _AdminDashboardState extends State<AdminDashboard>
         final wide = c.maxWidth > 900;
         return wide
             ? Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: leaderboardCard),
-            const SizedBox(width: 16),
-            Expanded(child: activityCard),
-          ],
-        )
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: leaderboardCard),
+                  const SizedBox(width: 16),
+                  Expanded(child: activityCard),
+                ],
+              )
             : Column(
-          children: [
-            leaderboardCard,
-            const SizedBox(height: 16),
-            activityCard,
-          ],
-        );
+                children: [
+                  leaderboardCard,
+                  const SizedBox(height: 16),
+                  activityCard,
+                ],
+              );
       },
     );
   }
@@ -454,8 +459,7 @@ class _AdminDashboardState extends State<AdminDashboard>
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Container(
           width: double.infinity,
-          padding:
-          const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.78),
             borderRadius: BorderRadius.circular(24),
@@ -498,8 +502,10 @@ class _ParticipationLineChart extends StatelessWidget {
         final docs = snapshot.data!.docs;
         if (docs.isEmpty) {
           return const Center(
-            child: Text('No participation data',
-                style: TextStyle(color: Colors.grey)),
+            child: Text(
+              'No participation data',
+              style: TextStyle(color: Colors.grey),
+            ),
           );
         }
 
@@ -510,7 +516,9 @@ class _ParticipationLineChart extends StatelessWidget {
           final dateStr = (data['date'] ?? '') as String;
           if (dateStr.isEmpty) continue;
           byDate.putIfAbsent(
-              dateStr, () => {'workshop': 0, 'hackathon': 0, 'quiz': 0});
+            dateStr,
+            () => {'workshop': 0, 'hackathon': 0, 'quiz': 0},
+          );
           byDate[dateStr]!['workshop'] =
               byDate[dateStr]!['workshop']! + (data['workshop'] ?? 0) as int;
           byDate[dateStr]!['hackathon'] =
@@ -520,8 +528,9 @@ class _ParticipationLineChart extends StatelessWidget {
         }
 
         final sortedKeys = byDate.keys.toList()..sort();
-        final lastKeys =
-        sortedKeys.length > 10 ? sortedKeys.sublist(sortedKeys.length - 10) : sortedKeys;
+        final lastKeys = sortedKeys.length > 10
+            ? sortedKeys.sublist(sortedKeys.length - 10)
+            : sortedKeys;
 
         final labels = <String>[];
         final workshopSpots = <FlSpot>[];
@@ -533,11 +542,12 @@ class _ParticipationLineChart extends StatelessWidget {
           final totals = byDate[key]!;
           labels.add(key.substring(5)); // show MM-DD
           workshopSpots.add(
-              FlSpot(i.toDouble(), (totals['workshop'] ?? 0).toDouble()));
+            FlSpot(i.toDouble(), (totals['workshop'] ?? 0).toDouble()),
+          );
           hackathonSpots.add(
-              FlSpot(i.toDouble(), (totals['hackathon'] ?? 0).toDouble()));
-          quizSpots
-              .add(FlSpot(i.toDouble(), (totals['quiz'] ?? 0).toDouble()));
+            FlSpot(i.toDouble(), (totals['hackathon'] ?? 0).toDouble()),
+          );
+          quizSpots.add(FlSpot(i.toDouble(), (totals['quiz'] ?? 0).toDouble()));
         }
 
         double maxY = 1;
@@ -561,10 +571,7 @@ class _ParticipationLineChart extends StatelessWidget {
                     if (i < 0 || i >= labels.length) {
                       return const SizedBox.shrink();
                     }
-                    return Text(
-                      labels[i],
-                      style: const TextStyle(fontSize: 9),
-                    );
+                    return Text(labels[i], style: const TextStyle(fontSize: 9));
                   },
                 ),
               ),
@@ -578,10 +585,10 @@ class _ParticipationLineChart extends StatelessWidget {
                   ),
                 ),
               ),
-              topTitles:
-              AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              rightTitles:
-              AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              rightTitles: AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
             ),
             lineBarsData: [
               _line(workshopSpots, Colors.orange),
@@ -637,8 +644,7 @@ class _EventTypePieChart extends StatelessWidget {
         final total = workshops + hackathons + quizzes;
         if (total == 0) {
           return const Center(
-            child: Text('No events yet',
-                style: TextStyle(color: Colors.grey)),
+            child: Text('No events yet', style: TextStyle(color: Colors.grey)),
           );
         }
 
@@ -694,8 +700,10 @@ class _EventTypePieChart extends StatelessWidget {
         Container(
           width: 10,
           height: 10,
-          decoration:
-          BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(4),
+          ),
         ),
         const SizedBox(width: 4),
         Text(label, style: const TextStyle(fontSize: 11)),
@@ -712,8 +720,7 @@ class _TopFiveLeaderboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream:
-      FirebaseFirestore.instance.collection('users').snapshots(),
+      stream: FirebaseFirestore.instance.collection('users').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
@@ -727,11 +734,13 @@ class _TopFiveLeaderboard extends StatelessWidget {
           if (role != 'Participant') continue;
 
           final streak = (userData['streak'] ?? 0) as int;
-          scores.add(_UserScore(
-            uid: userDoc.id,
-            name: (userData['name'] ?? 'Anonymous') as String,
-            streak: streak,
-          ));
+          scores.add(
+            _UserScore(
+              uid: userDoc.id,
+              name: (userData['name'] ?? 'Anonymous') as String,
+              streak: streak,
+            ),
+          );
         }
 
         return FutureBuilder<List<_UserScore>>(
@@ -741,17 +750,20 @@ class _TopFiveLeaderboard extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
-            final list =
-            snap.data!..sort((a, b) => b.totalScore.compareTo(a.totalScore));
-            final top = list!.take(5).toList();
+            final list = snap.data!
+              ..sort((a, b) => b.totalScore.compareTo(a.totalScore));
+            final top = list.take(5).toList();
 
             if (top.isEmpty) {
-              return const Text('No participants yet',
-                  style: TextStyle(color: Colors.grey));
+              return const Text(
+                'No participants yet',
+                style: TextStyle(color: Colors.grey),
+              );
             }
 
-            final maxScore =
-            top.first.totalScore == 0 ? 1 : top.first.totalScore;
+            final maxScore = top.first.totalScore == 0
+                ? 1
+                : top.first.totalScore;
 
             return Column(
               children: [
@@ -768,8 +780,7 @@ class _TopFiveLeaderboard extends StatelessWidget {
     );
   }
 
-  static Future<List<_UserScore>> _attachEvents(
-      List<_UserScore> base) async {
+  static Future<List<_UserScore>> _attachEvents(List<_UserScore> base) async {
     for (final u in base) {
       final snap = await FirebaseFirestore.instance
           .collection('users')
@@ -778,7 +789,7 @@ class _TopFiveLeaderboard extends StatelessWidget {
           .get();
 
       for (final d in snap.docs) {
-        final data = d.data() as Map<String, dynamic>;
+        final data = d.data();
         final type = (data['event_type'] ?? '') as String;
         if (type == 'Workshop') u.workshops++;
         if (type == 'Hackathon') u.hackathons++;
@@ -804,15 +815,14 @@ class _TopFiveLeaderboard extends StatelessWidget {
         Container(
           width: 36,
           height: 36,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: rankColor,
-          ),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: rankColor),
           alignment: Alignment.center,
           child: Text(
             '$rank',
             style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold),
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         const SizedBox(width: 10),
@@ -825,7 +835,9 @@ class _TopFiveLeaderboard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.w600),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(height: 4),
               ClipRRect(
@@ -846,8 +858,7 @@ class _TopFiveLeaderboard extends StatelessWidget {
           children: [
             Text(
               '${s.totalScore}',
-              style: TextStyle(
-                  color: rankColor, fontWeight: FontWeight.bold),
+              style: TextStyle(color: rankColor, fontWeight: FontWeight.bold),
             ),
             Text(
               '${s.workshops}W ${s.hackathons}H • ${s.streak}🔥',
@@ -866,11 +877,7 @@ class _UserScore {
   int workshops = 0;
   int hackathons = 0;
   int streak;
-  _UserScore({
-    required this.uid,
-    required this.name,
-    required this.streak,
-  });
+  _UserScore({required this.uid, required this.name, required this.streak});
 
   int get totalScore => workshops + hackathons + streak;
 }
@@ -891,8 +898,10 @@ class _RecentActivitiesPanel extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.data!.docs.isEmpty) {
-          return const Text('No activities yet',
-              style: TextStyle(color: Colors.grey));
+          return const Text(
+            'No activities yet',
+            style: TextStyle(color: Colors.grey),
+          );
         }
 
         return Column(
@@ -928,14 +937,15 @@ class _RecentActivitiesPanel extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                    fontWeight: FontWeight.w600, fontSize: 14),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
               ),
               subtitle: Text(
                 '$type • $date • $venue',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                    fontSize: 12, color: Colors.black54),
+                style: const TextStyle(fontSize: 12, color: Colors.black54),
               ),
             );
           }).toList(),

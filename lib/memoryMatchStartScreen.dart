@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:confetti/confetti.dart';
-import 'daily_contest.dart';
 import 'leaderboard.dart';
 import 'dart:convert';
 
@@ -33,8 +32,7 @@ class MemoryMatchStartScreen extends StatefulWidget {
   const MemoryMatchStartScreen({super.key});
 
   @override
-  State<MemoryMatchStartScreen> createState() =>
-      _MemoryMatchStartScreenState();
+  State<MemoryMatchStartScreen> createState() => _MemoryMatchStartScreenState();
 }
 
 class _MemoryMatchStartScreenState extends State<MemoryMatchStartScreen>
@@ -58,25 +56,35 @@ class _MemoryMatchStartScreenState extends State<MemoryMatchStartScreen>
       duration: const Duration(milliseconds: 800),
     );
 
-    _animScore = Tween<double>(begin: 0, end: currentScore.toDouble())
-        .animate(CurvedAnimation(parent: _animController, curve: Curves.elasticOut));
+    _animScore = Tween<double>(begin: 0, end: currentScore.toDouble()).animate(
+      CurvedAnimation(parent: _animController, curve: Curves.elasticOut),
+    );
   }
-  Future<void> _loadHasPlayed() async {  // ✅ FIX DAILY
+
+  Future<void> _loadHasPlayed() async {
+    // ✅ FIX DAILY
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      hasPlayed = prefs.getBool('played-$_todayKey') ?? false;  // Daily key!
+      hasPlayed = prefs.getBool('played-$_todayKey') ?? false; // Daily key!
     });
   }
+
   Future<void> _loadBestScore() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       bestScore = prefs.getInt('matchPairBestScore') ?? 0;
     });
   }
+
   Future<void> _saveToLeaderboard(int score, SharedPreferences prefs) async {
     final todayKey = _todayKey;
-    final playerId = prefs.getString('playerId') ?? 'guest_${DateTime.now().millisecondsSinceEpoch}';
-    final playerName = prefs.getString('playerName') ?? prefs.getString('displayName') ?? 'Player';
+    final playerId =
+        prefs.getString('playerId') ??
+        'guest_${DateTime.now().millisecondsSinceEpoch}';
+    final playerName =
+        prefs.getString('playerName') ??
+        prefs.getString('displayName') ??
+        'Player';
 
     List<String> ids = prefs.getStringList("daily_players_$todayKey") ?? [];
     if (!ids.contains(playerId)) ids.add(playerId);
@@ -89,12 +97,17 @@ class _MemoryMatchStartScreenState extends State<MemoryMatchStartScreen>
 
     playerData['games']['Memory Match'] = {
       "score": score,
-      "best": (playerData['games']['Memory Match']?['best'] ?? 0) < score ? score : playerData['games']['Memory Match']?['best'] ?? 0,
+      "best": (playerData['games']['Memory Match']?['best'] ?? 0) < score
+          ? score
+          : playerData['games']['Memory Match']?['best'] ?? 0,
       "played": true,
     };
 
     playerData['totalTime'] = (playerData['totalTime'] ?? 0) + 60;
-    await prefs.setString("player_${playerId}_$todayKey", jsonEncode(playerData));
+    await prefs.setString(
+      "player_${playerId}_$todayKey",
+      jsonEncode(playerData),
+    );
 
     LeaderboardStream().refresh();
   }
@@ -112,10 +125,14 @@ class _MemoryMatchStartScreenState extends State<MemoryMatchStartScreen>
     if (hasPlayed) return;
 
     final prefs = await SharedPreferences.getInstance();
-    final difficultyEnum = selectedLevel == 'easy' ? Difficulty.easy :
-    selectedLevel == 'medium' ? Difficulty.medium : Difficulty.hard;
+    final difficultyEnum = selectedLevel == 'easy'
+        ? Difficulty.easy
+        : selectedLevel == 'medium'
+        ? Difficulty.medium
+        : Difficulty.hard;
 
-    final score = await Navigator.push<int>(  // Get score back!
+    final score = await Navigator.push<int>(
+      // Get score back!
       context,
       MaterialPageRoute(
         builder: (_) => MemoryMatchGame(difficulty: difficultyEnum),
@@ -123,33 +140,17 @@ class _MemoryMatchStartScreenState extends State<MemoryMatchStartScreen>
     );
 
     if (score != null) {
-      await prefs.setBool('played-$_todayKey', true);  // Daily lock
-      await _saveToLeaderboard(score, prefs);          // ✅ LEADERBOARD MAGIC!
+      await prefs.setBool('played-$_todayKey', true); // Daily lock
+      await _saveToLeaderboard(score, prefs); // ✅ LEADERBOARD MAGIC!
 
       await _updateBestScore(score);
       setState(() => hasPlayed = true);
     }
   }
+
   String get _todayKey {
     final now = DateTime.now();
     return "${now.year}-${now.month}-${now.day}";
-  }
-  void _handleScoreUpdate(int score) async {
-    setState(() {
-      currentScore = score;
-    });
-
-    _animController.reset();
-    _animScore = Tween<double>(begin: 0, end: currentScore.toDouble())
-        .animate(CurvedAnimation(parent: _animController, curve: Curves.elasticOut));
-    _animController.forward();
-
-    if (score > bestScore) {
-      await _updateBestScore(score);
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('matchPairLastScore', score);
   }
 
   @override
@@ -162,7 +163,7 @@ class _MemoryMatchStartScreenState extends State<MemoryMatchStartScreen>
         backgroundColor: const Color(0xFF009688),
       ),
       floatingActionButton: FloatingActionButton.extended(
-          onPressed: hasPlayed ? null : _startGame,
+        onPressed: hasPlayed ? null : _startGame,
         icon: const Icon(Icons.play_arrow),
         label: Text(hasPlayed ? "Already Played" : "Start the Fun"),
         backgroundColor: hasPlayed ? Colors.grey : const Color(0xFF80CBC4),
@@ -247,7 +248,11 @@ class MemoryMatchGame extends StatefulWidget {
   final Difficulty difficulty;
   final void Function(int)? onScoreUpdate;
 
-  const MemoryMatchGame({super.key, required this.difficulty, this.onScoreUpdate});
+  const MemoryMatchGame({
+    super.key,
+    required this.difficulty,
+    this.onScoreUpdate,
+  });
 
   @override
   State<MemoryMatchGame> createState() => _MemoryMatchGameState();
@@ -267,22 +272,57 @@ class _MemoryMatchGameState extends State<MemoryMatchGame> {
   int? secondIndex;
   bool lock = false;
   bool gameEnded = false;
-  DateTime? _startTime;
 
   final List<String> emojiPool = [
-    "😀","😎","🤩","🥳","😍","🤖","👻","🎃",
-    "🐶","🐱","🦊","🐼","🐸","🐵","🦁","🐯",
-    "🍎","🍌","🍓","🍉","🍍","🍒","🥝","🍑",
-    "⚽","🏀","🏈","🎾","🎮","🎲","🚗","✈️",
-    "🌈","⭐","🔥","⚡","💎","🎁","🎈","🎯",
+    "😀",
+    "😎",
+    "🤩",
+    "🥳",
+    "😍",
+    "🤖",
+    "👻",
+    "🎃",
+    "🐶",
+    "🐱",
+    "🦊",
+    "🐼",
+    "🐸",
+    "🐵",
+    "🦁",
+    "🐯",
+    "🍎",
+    "🍌",
+    "🍓",
+    "🍉",
+    "🍍",
+    "🍒",
+    "🥝",
+    "🍑",
+    "⚽",
+    "🏀",
+    "🏈",
+    "🎾",
+    "🎮",
+    "🎲",
+    "🚗",
+    "✈️",
+    "🌈",
+    "⭐",
+    "🔥",
+    "⚡",
+    "💎",
+    "🎁",
+    "🎈",
+    "🎯",
   ];
 
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 1));
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 1),
+    );
     _setupGame();
-    _startTime = DateTime.now();
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() => secondsPassed++);
@@ -295,7 +335,6 @@ class _MemoryMatchGameState extends State<MemoryMatchGame> {
     _confettiController.dispose();
     super.dispose();
   }
-
 
   // Exit button pressed
   void _onExitPressed() {
@@ -321,6 +360,7 @@ class _MemoryMatchGameState extends State<MemoryMatchGame> {
       ),
     );
   }
+
   void _setupGame() {
     switch (widget.difficulty) {
       case Difficulty.easy:
@@ -337,7 +377,8 @@ class _MemoryMatchGameState extends State<MemoryMatchGame> {
     final totalCards = gridCount * gridCount;
     final pairs = totalCards ~/ 2;
 
-    icons = emojiPool.take(pairs).expand((e) => [e, e]).toList()..shuffle(Random());
+    icons = emojiPool.take(pairs).expand((e) => [e, e]).toList()
+      ..shuffle(Random());
 
     visible = List.filled(totalCards, false);
     matched = List.filled(totalCards, false);
@@ -347,7 +388,6 @@ class _MemoryMatchGameState extends State<MemoryMatchGame> {
     lock = false;
     gameEnded = false;
     secondsPassed = 0;
-    _startTime = DateTime.now();
   }
 
   void _onCardTap(int index) {
@@ -446,55 +486,15 @@ class _MemoryMatchGameState extends State<MemoryMatchGame> {
     );
   }
 
-
-  void _exitGame() async {
-    if (gameEnded) return;
-
-    final exit = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Exit Game?"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Score so far: ${matched.where((m) => m).length}"),
-            Text("Time taken: $secondsPassed seconds"),
-            const SizedBox(height: 10),
-            const Text(
-              "Keep practicing to improve your memory!",
-              style: TextStyle(fontStyle: FontStyle.italic, color: Colors.teal),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false), // continue playing
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true), // exit
-            child: const Text("Exit"),
-          ),
-        ],
-      ),
-    );
-
-    if (exit == true) {
-      gameEnded = true;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('hasPlayed', true);
-      _showExitDialog();
-    }
-  }
   Future<void> onGameWon(int score, int timeSeconds) async {
     final prefs = await SharedPreferences.getInstance();
 
     final todayKey =
         "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}";
     final playerId =
-        prefs.getString('playerId') ?? 'guest_${DateTime.now().millisecondsSinceEpoch}';
-    final playerName =
-        prefs.getString('playerName') ?? 'Player';
+        prefs.getString('playerId') ??
+        'guest_${DateTime.now().millisecondsSinceEpoch}';
+    final playerName = prefs.getString('playerName') ?? 'Player';
 
     List<String> ids = prefs.getStringList("daily_players_$todayKey") ?? [];
     if (!ids.contains(playerId)) ids.add(playerId);
@@ -513,44 +513,15 @@ class _MemoryMatchGameState extends State<MemoryMatchGame> {
       "played": true,
     };
 
-    playerData['totalTime'] =
-        (playerData['totalTime'] ?? 0) + timeSeconds;
+    playerData['totalTime'] = (playerData['totalTime'] ?? 0) + timeSeconds;
 
     await prefs.setString(
-        "player_${playerId}_$todayKey", jsonEncode(playerData));
+      "player_${playerId}_$todayKey",
+      jsonEncode(playerData),
+    );
 
     // 🔥 LIVE UPDATE
     LeaderboardStream().refresh();
-  }
-
-
-  void _showExitDialog() async {
-    final gameScore = matched.where((e) => e).length;
-    final gameTime = secondsPassed;
-
-    // ✅ Save partial game too!
-    onGameWon(gameScore, gameTime);
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: const Text("Game Ended"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Final Score: $gameScore"),
-            Text("Time: $gameTime seconds"),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-            child: const Text("View Leaderboard"),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -632,7 +603,12 @@ class _MemoryMatchGameState extends State<MemoryMatchGame> {
               confettiController: _confettiController,
               blastDirectionality: BlastDirectionality.explosive,
               shouldLoop: false,
-              colors: const [Colors.green, Colors.blue, Colors.pink, Colors.orange],
+              colors: const [
+                Colors.green,
+                Colors.blue,
+                Colors.pink,
+                Colors.orange,
+              ],
             ),
           ),
         ],

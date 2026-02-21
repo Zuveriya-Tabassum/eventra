@@ -150,6 +150,12 @@ class _HackathonListPageState extends State<HackathonListPage>
           ),
           title: const Text('Hackathons'),
           backgroundColor: Colors.teal,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh, color: Colors.white),
+              onPressed: () => setState(() {}),
+            ),
+          ],
           bottom: TabBar(
             controller: _tabController,
             labelColor: Colors.white,
@@ -683,7 +689,7 @@ class _HackathonCardState extends State<HackathonCard>
               const Icon(Icons.person_off, size: 48, color: Colors.grey),
               const Text('Please login to view hackathons'),
               ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, '/login'),
+                onPressed: () => Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false),
                 child: const Text('Login'),
               ),
             ],

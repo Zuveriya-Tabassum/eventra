@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'quizzes.dart';
-import 'leaderboard.dart';
 
 class DailyContest extends StatefulWidget {
-  const DailyContest({Key? key}) : super(key: key);
+  const DailyContest({super.key});
 
   @override
   State<DailyContest> createState() => _DailyContestState();
@@ -19,8 +18,6 @@ class _DailyContestState extends State<DailyContest> {
   late String playerName;
   bool _alreadyPlayed = false;
   bool _loading = true;
-  DateTime? _challengeStartTime;
-
 
   @override
   void initState() {
@@ -29,6 +26,7 @@ class _DailyContestState extends State<DailyContest> {
     todayKey = "${today.year}-${today.month}-${today.day}";
     _loadUserAndInit();
   }
+
   Future<void> _loadUserAndInit() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -44,8 +42,7 @@ class _DailyContestState extends State<DailyContest> {
   Future<void> _loadInitialState() async {
     final prefs = await SharedPreferences.getInstance();
 
-    _alreadyPlayed =
-        prefs.getBool('$playerId-completed-$todayKey') ?? false;
+    _alreadyPlayed = prefs.getBool('$playerId-completed-$todayKey') ?? false;
 
     await _loadParticipation();
     await _loadScores();
@@ -53,16 +50,12 @@ class _DailyContestState extends State<DailyContest> {
     setState(() => _loading = false);
   }
 
-
-
   Future<void> _loadParticipation() async {
     final prefs = await SharedPreferences.getInstance();
     Map<String, bool> participation = {};
 
     for (var challenge in challenges) {
-      bool played = prefs.getBool(
-        '$playerId-$challenge-$todayKey',
-      ) ?? false;
+      bool played = prefs.getBool('$playerId-$challenge-$todayKey') ?? false;
 
       participation[challenge] = played;
     }
@@ -70,22 +63,18 @@ class _DailyContestState extends State<DailyContest> {
     setState(() => _participatedToday = participation);
   }
 
-
   Future<void> _loadScores() async {
     final prefs = await SharedPreferences.getInstance();
     Map<String, int> scores = {};
 
     for (var challenge in challenges) {
-      int score = prefs.getInt(
-        'score-$playerId-$challenge-$todayKey',
-      ) ?? 0;
+      int score = prefs.getInt('score-$playerId-$challenge-$todayKey') ?? 0;
 
       scores[challenge] = score;
     }
 
     setState(() => _todayScores = scores);
   }
-
 
   Future<void> _markParticipation(String challenge, int score) async {
     final prefs = await SharedPreferences.getInstance();
@@ -105,50 +94,45 @@ class _DailyContestState extends State<DailyContest> {
     }
   }
 
-
-
   void _tryStartChallenge(String challenge) async {
     if (_participatedToday[challenge] == true) {
       _showScoreDialogAutoClose(challenge, _todayScores[challenge] ?? 0);
       return;
     }
 
-    _challengeStartTime = DateTime.now(); // ⏱️ START TIMER
+    // ⏱️ START TIMER
 
     final Map<String, dynamic>? result =
-    await Navigator.push<Map<String, dynamic>>(
-      context,
-      MaterialPageRoute(
-        builder: (_) {
-          switch (challenge) {
-            case 'Logic':
-              return QuizPage(
-                title: 'Logic Quiz',
-                questions: QuizData.logicQuizShuffled(),
-              );
-            case 'Number':
-              return QuizPage(
-                title: 'Number Quiz',
-                questions: QuizData.numberQuizShuffled(),
-              );
-            default:
-              return const Scaffold(
-                  body: Center(child: Text("Unknown challenge")));
-          }
-        },
-      ),
-    );
+        await Navigator.push<Map<String, dynamic>>(
+          context,
+          MaterialPageRoute(
+            builder: (_) {
+              switch (challenge) {
+                case 'Logic':
+                  return QuizPage(
+                    title: 'Logic Quiz',
+                    questions: QuizData.logicQuizShuffled(),
+                  );
+                case 'Number':
+                  return QuizPage(
+                    title: 'Number Quiz',
+                    questions: QuizData.numberQuizShuffled(),
+                  );
+                default:
+                  return const Scaffold(
+                    body: Center(child: Text("Unknown challenge")),
+                  );
+              }
+            },
+          ),
+        );
 
     if (result != null && result.containsKey('score')) {
       int score = result['score'] as int;
 
-      final timeSpent = DateTime.now()
-          .difference(_challengeStartTime!)
-          .inSeconds; // ⏱️ END TIMER
+      // ⏱️ END TIMER
 
       await _markParticipation(challenge, score);
-
-
 
       _showScoreDialogAutoClose(challenge, score);
     }
@@ -175,9 +159,7 @@ class _DailyContestState extends State<DailyContest> {
   Widget build(BuildContext context) {
     // 1️⃣ Loading state
     if (_loading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     // 2️⃣ Already played → block screen
@@ -214,20 +196,17 @@ class _DailyContestState extends State<DailyContest> {
           return ListTile(
             title: Text(
               challenge,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             trailing: played
                 ? Text(
-              "Played: ${_todayScores[challenge] ?? 0} pts",
-              style: const TextStyle(color: Colors.grey),
-            )
+                    "Played: ${_todayScores[challenge] ?? 0} pts",
+                    style: const TextStyle(color: Colors.grey),
+                  )
                 : ElevatedButton(
-              onPressed: () => _tryStartChallenge(challenge),
-              child: const Text("Play Now"),
-            ),
+                    onPressed: () => _tryStartChallenge(challenge),
+                    child: const Text("Play Now"),
+                  ),
           );
         },
       ),

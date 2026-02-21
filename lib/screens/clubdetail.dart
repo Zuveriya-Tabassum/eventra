@@ -3,8 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'club_model.dart'; // Your Club model
-import 'events.dart';    // contains ClubEventListPage(isAdmin,currentUserId)
-import 'event_receipt_page.dart';
+import 'events.dart'; // contains ClubEventListPage(isAdmin,currentUserId)
 
 class ClubSplashScreen extends StatefulWidget {
   final Club club;
@@ -62,12 +61,12 @@ class _ClubSplashScreenState extends State<ClubSplashScreen> {
                           color: Colors.black.withOpacity(0.2),
                           blurRadius: 20,
                           spreadRadius: 5,
-                        )
+                        ),
                       ],
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(70),
-                      child: Image.network(
+                      child: Image.asset(
                         widget.club.imageUrl,
                         height: 140,
                         width: 140,
@@ -118,10 +117,7 @@ class _AboutSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildAboutCard(),
-          const SizedBox(height: 20),
-        ],
+        children: [_buildAboutCard(), const SizedBox(height: 20)],
       ),
     );
   }
@@ -152,19 +148,28 @@ class _AboutSection extends StatelessWidget {
               Text(
                 "About Us",
                 style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.deepOrange),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepOrange,
+                ),
               ),
               SizedBox(height: 12),
               Text(
                 "Our club is a dynamic student-driven community focused on innovation, leadership, and hands-on learning.",
-                style: TextStyle(fontSize: 16, height: 1.6, color: Colors.black),
+                style: TextStyle(
+                  fontSize: 16,
+                  height: 1.6,
+                  color: Colors.black,
+                ),
               ),
               SizedBox(height: 10),
               Text(
                 "By organizing workshops, events, hackathons, and outreach activities, the club bridges academics and industry expectations.",
-                style: TextStyle(fontSize: 16, height: 1.6, color: Colors.black),
+                style: TextStyle(
+                  fontSize: 16,
+                  height: 1.6,
+                  color: Colors.black,
+                ),
               ),
             ],
           ),
@@ -219,7 +224,7 @@ class WhyChooseUsWidget extends StatelessWidget {
       Icons.code,
       Icons.groups,
       Icons.terminal,
-      Icons.workspace_premium
+      Icons.workspace_premium,
     ];
     return icons[index % icons.length];
   }
@@ -304,8 +309,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
       'title': 'Hackathon 2025',
       'date': 'Feb 15-16, 2025',
       'attendees': '200+ Participants',
-      'image':
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=250&fit=crop',
+      'image': 'assets/images/img.png',
       'description': '24-hour coding challenge',
       'details': 'Winning teams get internships + ₹50K prizes. 50+ companies.',
       'color': Colors.deepOrange,
@@ -314,8 +318,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
       'title': 'Flutter Workshop',
       'date': 'Jan 25, 2025',
       'attendees': '150 Attendees',
-      'image':
-      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=250&fit=crop',
+      'image': 'assets/images/img.png',
       'description': 'Build real apps',
       'details': 'Hands-on with Google certified trainers. Certificates.',
       'color': Colors.orange.shade600,
@@ -324,8 +327,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
       'title': 'AI/ML Summit',
       'date': 'Mar 10, 2025',
       'attendees': '300+ Participants',
-      'image':
-      'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=250&fit=crop',
+      'image': 'assets/images/img.png',
       'description': 'Latest AI trends',
       'details': 'IIT professors + Google AI experts. Live projects.',
       'color': Colors.orange.shade700,
@@ -334,8 +336,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
       'title': 'Cybersecurity Bootcamp',
       'date': 'Apr 5-6, 2025',
       'attendees': '100+ Attendees',
-      'image':
-      'https://images.unsplash.com/photo-1611593736516-fb350403d30b?w=400&h=250&fit=crop',
+      'image': 'assets/images/img.png',
       'description': 'Ethical hacking',
       'details': 'CEH certified training with CTF challenges.',
       'color': Colors.orange.shade800,
@@ -345,14 +346,18 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
   @override
   void initState() {
     super.initState();
-    _navbarController =
-        AnimationController(duration: const Duration(milliseconds: 400), vsync: this);
+    _navbarController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
     _navbarAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _navbarController, curve: Curves.easeInOut),
     );
     _eventsPageController = PageController();
-    _autoScrollTimer =
-        Timer.periodic(const Duration(seconds: 4), (timer) => _nextEvent());
+    _autoScrollTimer = Timer.periodic(
+      const Duration(seconds: 4),
+      (timer) => _nextEvent(),
+    );
     _scrollController.addListener(_onScroll);
   }
 
@@ -373,8 +378,10 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
       }
     } else if (_showNavbar) {
       _navbarController.reverse();
-      Future.delayed(const Duration(milliseconds: 400),
-              () => setState(() => _showNavbar = false));
+      Future.delayed(
+        const Duration(milliseconds: 400),
+        () => setState(() => _showNavbar = false),
+      );
     }
   }
 
@@ -403,7 +410,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
       body: Stack(
         children: [
           SizedBox.expand(
-            child: Image.network(widget.club.imageUrl, fit: BoxFit.cover),
+            child: Image.asset(widget.club.imageUrl, fit: BoxFit.cover),
           ),
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
@@ -421,29 +428,30 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
                       tag: widget.club.imageUrl,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: Image.network(widget.club.imageUrl,
-                            height: 160, width: 160, fit: BoxFit.cover),
+                        child: Image.asset(
+                          widget.club.imageUrl,
+                          height: 160,
+                          width: 160,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
                     Text(
                       widget.club.name,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium
+                      style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       widget.club.motto,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium
-                          ?.copyWith(
-                          color: Colors.white70,
-                          fontStyle: FontStyle.italic),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.white70,
+                        fontStyle: FontStyle.italic,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 30),
@@ -459,7 +467,9 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
             animation: _navbarAnimation,
             builder: (context, child) {
               return Positioned(
-                bottom: _showNavbar ? 20 + (1 - _navbarAnimation.value) * 80 : -100,
+                bottom: _showNavbar
+                    ? 20 + (1 - _navbarAnimation.value) * 80
+                    : -100,
                 left: 24 * _navbarAnimation.value,
                 right: 24 * _navbarAnimation.value,
                 child: Transform.scale(
@@ -468,8 +478,9 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
                     opacity: _navbarAnimation.value,
                     child: Material(
                       elevation: 12 * _navbarAnimation.value,
-                      borderRadius:
-                      BorderRadius.circular(32 * _navbarAnimation.value),
+                      borderRadius: BorderRadius.circular(
+                        32 * _navbarAnimation.value,
+                      ),
                       child: _buildNavbar(context),
                     ),
                   ),
@@ -491,11 +502,17 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            _buildDetailRow(Icons.label_important, 'Category',
-                widget.club.category),
+            _buildDetailRow(
+              Icons.label_important,
+              'Category',
+              widget.club.category,
+            ),
             const Divider(),
             _buildDetailRow(
-                Icons.code, 'Developed By', widget.club.developedBy),
+              Icons.code,
+              'Developed By',
+              widget.club.developedBy,
+            ),
             const Divider(),
             _buildDescription(
               'About the Club',
@@ -530,16 +547,18 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label,
-                    style: TextStyle(
-                        fontSize: 14, color: Colors.teal.shade800)),
+                Text(
+                  label,
+                  style: TextStyle(fontSize: 14, color: Colors.teal.shade800),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   value,
                   style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.teal.shade900),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.teal.shade900,
+                  ),
                 ),
               ],
             ),
@@ -553,16 +572,22 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title,
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.teal.shade900)),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.teal.shade900,
+          ),
+        ),
         const SizedBox(height: 8),
         Text(
           desc,
           style: const TextStyle(
-              fontSize: 15, height: 1.5, color: Colors.black87),
+            fontSize: 15,
+            height: 1.5,
+            color: Colors.black87,
+          ),
           textAlign: TextAlign.justify,
         ),
       ],
@@ -573,16 +598,19 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [
-          Colors.white.withOpacity(0.98),
-          Colors.white.withOpacity(0.92)
-        ]),
+        gradient: LinearGradient(
+          colors: [
+            Colors.white.withOpacity(0.98),
+            Colors.white.withOpacity(0.92),
+          ],
+        ),
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 30,
-              offset: const Offset(0, 15))
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
+          ),
         ],
       ),
       child: Row(
@@ -597,7 +625,11 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
   }
 
   Widget _buildNavItem(
-      BuildContext context, String title, IconData icon, Color color) {
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color color,
+  ) {
     return GestureDetector(
       onTapDown: (_) => _scrollToSectionWithEffect(title),
       child: Container(
@@ -614,9 +646,10 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
             Text(
               title,
               style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black87),
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: Colors.black87,
+              ),
             ),
           ],
         ),
@@ -652,11 +685,14 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Explore Our Club",
-            style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white)),
+        const Text(
+          "Explore Our Club",
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
         const SizedBox(height: 30),
         const _AboutSection(),
         const SizedBox(height: 40),
@@ -690,13 +726,11 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient:
-        LinearGradient(colors: [Colors.white, Colors.grey.shade50]),
+        gradient: LinearGradient(colors: [Colors.white, Colors.grey.shade50]),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.green.withOpacity(0.2)),
         boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.05), blurRadius: 20)
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20),
         ],
       ),
       child: Column(
@@ -708,24 +742,29 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                      colors: [Colors.green, Colors.green.shade600]),
+                    colors: [Colors.green, Colors.green.shade600],
+                  ),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.group,
-                    color: Colors.white, size: 24),
+                child: const Icon(Icons.group, color: Colors.white, size: 24),
               ),
               const SizedBox(width: 16),
               const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Our Team',
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green)),
-                    Text('Leadership & Members',
-                        style: TextStyle(fontSize: 14, color: Colors.grey)),
+                    Text(
+                      'Our Team',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                      ),
+                    ),
+                    Text(
+                      'Leadership & Members',
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
                   ],
                 ),
               ),
@@ -733,8 +772,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
                 onPressed: () => _showMembersDialog(context),
                 icon: const Icon(Icons.visibility, size: 18),
                 label: const Text('View All'),
-                style: TextButton.styleFrom(
-                    foregroundColor: Colors.green),
+                style: TextButton.styleFrom(foregroundColor: Colors.green),
               ),
             ],
           ),
@@ -742,36 +780,69 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
           Row(
             children: [
               Expanded(
-                child: _buildTeamCard('Priya Sharma', 'President',
-                    'CSE-2021-045', Colors.deepPurple, true, 'lib/img/img1.png'),
+                child: _buildTeamCard(
+                  'Priya Sharma',
+                  'President',
+                  'CSE-2021-045',
+                  Colors.deepPurple,
+                  true,
+                  'lib/img/img1.png',
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _buildTeamCard('Amit Patel', 'Vice President',
-                    'CSE-2021-078', Colors.orange, true, 'assets/vp.png'),
+                child: _buildTeamCard(
+                  'Amit Patel',
+                  'Vice President',
+                  'CSE-2021-078',
+                  Colors.orange,
+                  true,
+                  'assets/vp.png',
+                ),
               ),
             ],
           ),
           const SizedBox(height: 24),
-          Text('Core Team',
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green.shade800)),
+          Text(
+            'Core Team',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.green.shade800,
+            ),
+          ),
           const SizedBox(height: 16),
           SizedBox(
             height: 200,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                _buildTeamCard('Dr. Rajesh K.', 'Faculty Advisor', 'Faculty',
-                    Colors.indigo, false, 'assets/advisor.png'),
+                _buildTeamCard(
+                  'Dr. Rajesh K.',
+                  'Faculty Advisor',
+                  'Faculty',
+                  Colors.indigo,
+                  false,
+                  'assets/advisor.png',
+                ),
                 const SizedBox(width: 12),
-                _buildTeamCard('Priyanka M.', 'Tech Lead', 'CSE-2022-089',
-                    Colors.pink, false, 'assets/tech_lead.png'),
+                _buildTeamCard(
+                  'Priyanka M.',
+                  'Tech Lead',
+                  'CSE-2022-089',
+                  Colors.pink,
+                  false,
+                  'assets/tech_lead.png',
+                ),
                 const SizedBox(width: 12),
-                _buildTeamCard('Vikram R.', 'Events Head', 'ECE-2021-112',
-                    Colors.teal, false, 'assets/events_head.png'),
+                _buildTeamCard(
+                  'Vikram R.',
+                  'Events Head',
+                  'ECE-2021-112',
+                  Colors.teal,
+                  false,
+                  'assets/events_head.png',
+                ),
               ],
             ),
           ),
@@ -780,20 +851,23 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
     );
   }
 
-  Widget _buildTeamCard(String name, String role, String rollNo, Color color,
-      bool isExecutive, String imagePath) {
+  Widget _buildTeamCard(
+    String name,
+    String role,
+    String rollNo,
+    Color color,
+    bool isExecutive,
+    String imagePath,
+  ) {
     return GestureDetector(
-      onTap: () =>
-          _showMemberDetails(context, name, role, rollNo, imagePath),
+      onTap: () => _showMemberDetails(context, name, role, rollNo, imagePath),
       child: Container(
         width: 150,
-        padding:
-        const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border:
-          Border.all(color: color.withOpacity(0.15), width: 1.5),
+          border: Border.all(color: color.withOpacity(0.15), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: color.withOpacity(0.05),
@@ -808,8 +882,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border:
-                Border.all(color: color.withOpacity(0.3), width: 2),
+                border: Border.all(color: color.withOpacity(0.3), width: 2),
               ),
               child: CircleAvatar(
                 radius: 30,
@@ -825,26 +898,27 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
             Text(
               role.toUpperCase(),
               style: TextStyle(
-                  color: color,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.5),
+                color: color,
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0.5,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               name,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: Colors.black87),
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: Colors.black87,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
             Text(
               rollNo,
-              style:
-              TextStyle(color: Colors.grey.shade500, fontSize: 11),
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
             ),
           ],
         ),
@@ -853,12 +927,16 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
   }
 
   void _showMemberDetails(
-      BuildContext context, String name, String role, String rollNo, String imagePath) {
+    BuildContext context,
+    String name,
+    String role,
+    String rollNo,
+    String imagePath,
+  ) {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -870,14 +948,21 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
                 backgroundColor: Colors.green.withOpacity(0.1),
               ),
               const SizedBox(height: 16),
-              Text(name,
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold)),
-              Text(role,
-                  style: const TextStyle(
-                      color: Colors.green,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600)),
+              Text(
+                name,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                role,
+                style: const TextStyle(
+                  color: Colors.green,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               const Divider(height: 32),
               _buildDetailRow(Icons.badge, "Roll Number", rollNo),
               const SizedBox(height: 24),
@@ -887,10 +972,11 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
                   backgroundColor: Colors.green,
                   minimumSize: const Size(double.infinity, 45),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 child: const Text('Close'),
-              )
+              ),
             ],
           ),
         ),
@@ -904,31 +990,31 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
         'name': 'Rahul Verma',
         'rollNo': 'CSE-2021-001',
         'role': 'Member',
-        'img': 'assets/m1.png'
+        'img': 'assets/m1.png',
       },
       {
         'name': 'Anita Desai',
         'rollNo': 'ECE-2022-045',
         'role': 'Member',
-        'img': 'assets/m2.png'
+        'img': 'assets/m2.png',
       },
       {
         'name': 'Vikram Singh',
         'rollNo': 'IT-2021-089',
         'role': 'Member',
-        'img': 'assets/m3.png'
+        'img': 'assets/m3.png',
       },
     ];
 
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Container(
           width: double.infinity,
           constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.7),
+            maxHeight: MediaQuery.of(context).size.height * 0.7,
+          ),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -939,11 +1025,14 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Club Members',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green)),
+                  const Text(
+                    'Club Members',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
                   IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () => Navigator.pop(context),
@@ -955,26 +1044,33 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
                 child: ListView.separated(
                   itemCount: allMembers.length,
                   separatorBuilder: (context, index) =>
-                  const SizedBox(height: 10),
+                      const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     final m = allMembers[index];
                     return ListTile(
                       leading: CircleAvatar(
                         backgroundImage: AssetImage(m['img']!),
                         onBackgroundImageError: (_, __) =>
-                        const Icon(Icons.person),
+                            const Icon(Icons.person),
                       ),
-                      title: Text(m['name']!,
-                          style:
-                          const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle:
-                      Text("${m['role']} • ${m['rollNo']}"),
-                      trailing: const Icon(Icons.chevron_right,
-                          color: Colors.green),
+                      title: Text(
+                        m['name']!,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text("${m['role']} • ${m['rollNo']}"),
+                      trailing: const Icon(
+                        Icons.chevron_right,
+                        color: Colors.green,
+                      ),
                       onTap: () {
                         Navigator.pop(context);
-                        _showMemberDetails(context, m['name']!, m['role']!,
-                            m['rollNo']!, m['img']!);
+                        _showMemberDetails(
+                          context,
+                          m['name']!,
+                          m['role']!,
+                          m['rollNo']!,
+                          m['img']!,
+                        );
                       },
                     );
                   },
@@ -994,19 +1090,19 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
         "title": "ISO Certified",
         "issuer": "Int. Org",
         "year": "2025",
-        "image": "https://img.icons8.com/color/96/certificate.png"
+        "image": 'assets/images/logo1.jpeg',
       },
       {
         "title": "Innovation Award",
         "issuer": "Tech Fest",
         "year": "2025",
-        "image": "https://img.icons8.com/color/96/trophy.png"
+        "image": 'assets/images/logo1.jpeg',
       },
       {
         "title": "Community Service",
         "issuer": "Local NGO",
         "year": "2024",
-        "image": "https://img.icons8.com/color/96/medal.png"
+        "image": 'assets/images/logo1.jpeg',
       },
     ];
 
@@ -1024,9 +1120,10 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
           const Text(
             "Certifications",
             style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple),
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.deepPurple,
+            ),
           ),
           const SizedBox(height: 20),
           SizedBox(
@@ -1066,10 +1163,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.orange.shade300),
         boxShadow: [
-          BoxShadow(
-            color: Colors.orange.withOpacity(0.2),
-            blurRadius: 20,
-          ),
+          BoxShadow(color: Colors.orange.withOpacity(0.2), blurRadius: 20),
         ],
       ),
       child: Column(
@@ -1088,8 +1182,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
                       ),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child:
-                    const Icon(Icons.event, color: Colors.white),
+                    child: const Icon(Icons.event, color: Colors.white),
                   ),
                   const SizedBox(width: 16),
                   Column(
@@ -1128,8 +1221,10 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: Colors.orange,
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1153,9 +1248,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
                   },
                   itemCount: eventsData.length,
                   itemBuilder: (context, index) {
-                    return _buildEventImageCard(
-                      event: eventsData[index],
-                    );
+                    return _buildEventImageCard(event: eventsData[index]);
                   },
                 ),
                 Positioned(
@@ -1166,10 +1259,9 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
                       eventsData.length,
-                          (index) => AnimatedContainer(
+                      (index) => AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
-                        margin:
-                        const EdgeInsets.symmetric(horizontal: 4),
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
                         width: _currentEventIndex == index ? 18 : 8,
                         height: 8,
                         decoration: BoxDecoration(
@@ -1210,16 +1302,12 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.network(
+            Image.asset(
               event['image'] ?? '',
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => Container(
                 color: color.withOpacity(0.4),
-                child: const Icon(
-                  Icons.event,
-                  color: Colors.white,
-                  size: 50,
-                ),
+                child: const Icon(Icons.event, color: Colors.white, size: 50),
               ),
             ),
             Container(
@@ -1229,10 +1317,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.7),
-                  ],
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
                 ),
               ),
               child: Text(
@@ -1305,39 +1390,39 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
               const SizedBox(height: 32),
               isMobile
                   ? Column(
-                children: [
-                  _buildContactRow(
-                    icon: Icons.email_outlined,
-                    title: 'Email',
-                    value: 'contact@clubhub.edu',
-                  ),
-                  const SizedBox(height: 20),
-                  _buildContactRow(
-                    icon: Icons.phone_outlined,
-                    title: 'Phone',
-                    value: '+91 98765 43210',
-                  ),
-                ],
-              )
+                      children: [
+                        _buildContactRow(
+                          icon: Icons.email_outlined,
+                          title: 'Email',
+                          value: 'contact@clubhub.edu',
+                        ),
+                        const SizedBox(height: 20),
+                        _buildContactRow(
+                          icon: Icons.phone_outlined,
+                          title: 'Phone',
+                          value: '+91 98765 43210',
+                        ),
+                      ],
+                    )
                   : Row(
-                children: [
-                  Expanded(
-                    child: _buildContactRow(
-                      icon: Icons.email_outlined,
-                      title: 'Email',
-                      value: 'contact@clubhub.edu',
+                      children: [
+                        Expanded(
+                          child: _buildContactRow(
+                            icon: Icons.email_outlined,
+                            title: 'Email',
+                            value: 'contact@clubhub.edu',
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: _buildContactRow(
+                            icon: Icons.phone_outlined,
+                            title: 'Phone',
+                            value: '+91 98765 43210',
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: _buildContactRow(
-                      icon: Icons.phone_outlined,
-                      title: 'Phone',
-                      value: '+91 98765 43210',
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
         );
@@ -1358,11 +1443,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage>
             color: Colors.tealAccent.withOpacity(0.2),
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            icon,
-            color: Colors.tealAccent,
-            size: 26,
-          ),
+          child: Icon(icon, color: Colors.tealAccent, size: 26),
         ),
         const SizedBox(width: 12),
         Column(
@@ -1397,7 +1478,6 @@ class _CertificationCard extends StatelessWidget {
   final double? width;
 
   const _CertificationCard({
-    super.key,
     required this.title,
     required this.issuer,
     required this.year,
@@ -1412,19 +1492,21 @@ class _CertificationCard extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-            colors: [Colors.teal.shade300, Colors.teal.shade500]),
+          colors: [Colors.teal.shade300, Colors.teal.shade500],
+        ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 4)),
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.network(imageUrl, height: 60, width: 60),
+          Image.asset(imageUrl, height: 60, width: 60),
           const SizedBox(height: 12),
           Text(
             title,
@@ -1432,21 +1514,26 @@ class _CertificationCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
             style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.white),
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(height: 4),
-          Text(issuer,
-              style:
-              const TextStyle(fontSize: 11, color: Colors.white70),
-              textAlign: TextAlign.center),
+          Text(
+            issuer,
+            style: const TextStyle(fontSize: 11, color: Colors.white70),
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 4),
-          Text(year,
-              style: const TextStyle(
-                  fontSize: 11,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600)),
+          Text(
+            year,
+            style: const TextStyle(
+              fontSize: 11,
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );

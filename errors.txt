@@ -1,0 +1,161 @@
+Analyzing eventra...                                            
+
+   info - Don't use 'BuildContext's across async gaps - lib\daily.dart:147:32 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\daily.dart:147:56 - use_build_context_synchronously
+   info - Unnecessary use of multiple underscores - lib\daily.dart:191:31 - unnecessary_underscores
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\daily_contest.dart:340:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\daily_contest.dart:381:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\daily_contest.dart:442:45 - deprecated_member_use
+   info - Invalid use of a private type in a public API - lib\game.dart:11:3 - library_private_types_in_public_api
+   info - Statements in a while should be enclosed in a block - lib\game.dart:76:37 - curly_braces_in_flow_control_structures
+   info - 'WillPopScope' is deprecated and shouldn't be used. Use PopScope instead. The Android predictive back feature will not work with WillPopScope. This feature was deprecated after v3.12.0-1.0.pre - lib\game.dart:224:12 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps - lib\game.dart:227:22 - use_build_context_synchronously
+   info - The file name 'gameStartScreen.dart' isn't a lower_case_with_underscores identifier - lib\gameStartScreen.dart:1:1 - file_names
+   info - Invalid use of a private type in a public API - lib\gameStartScreen.dart:9:3 - library_private_types_in_public_api
+   info - The file name 'gameStartScreen_2048.dart' isn't a lower_case_with_underscores identifier - lib\gameStartScreen_2048.dart:1:1 - file_names
+   info - Don't use 'BuildContext's across async gaps - lib\gameStartScreen_2048.dart:53:7 - use_build_context_synchronously
+   info - Invalid use of a private type in a public API - lib\game_2048.dart:10:3 - library_private_types_in_public_api
+   info - Statements in a while should be enclosed in a block - lib\game_2048.dart:79:41 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\game_2048.dart:244:44 - deprecated_member_use
+   info - Don't invoke 'print' in production code - lib\leaderboard.dart:35:5 - avoid_print
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\leaderboard.dart:230:17 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\leaderboard.dart:266:45 - deprecated_member_use
+   info - The file name 'memoryMatch.dart' isn't a lower_case_with_underscores identifier - lib\memoryMatch.dart:1:1 - file_names
+   info - Parameter 'key' could be a super parameter - lib\memoryMatch.dart:10:9 - use_super_parameters
+   info - Invalid use of a private type in a public API - lib\memoryMatch.dart:13:3 - library_private_types_in_public_api
+   info - The private field _icons could be 'final' - lib\memoryMatch.dart:19:16 - prefer_final_fields
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\memoryMatch.dart:176:38 - deprecated_member_use
+   info - The file name 'memoryMatchStartScreen.dart' isn't a lower_case_with_underscores identifier - lib\memoryMatchStartScreen.dart:1:1 - file_names
+   info - Don't use 'BuildContext's across async gaps - lib\memoryMatchStartScreen.dart:136:7 - use_build_context_synchronously
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\memoryMatchStartScreen.dart:198:17 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\memoryMatchStartScreen.dart:199:17 - deprecated_member_use
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\memoryMatchStartScreen.dart:204:17 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\memoryMatchStartScreen.dart:205:17 - deprecated_member_use
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\memoryMatchStartScreen.dart:210:17 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\memoryMatchStartScreen.dart:211:17 - deprecated_member_use
+   info - Unnecessary use of multiple underscores - lib\memoryMatchStartScreen.dart:218:30 - unnecessary_underscores
+   info - Don't use 'BuildContext's across async gaps - lib\memoryMatchStartScreen.dart:452:29 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\memoryMatchStartScreen.dart:589:37 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps - lib\quizzes.dart:442:7 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\admin_dashboard.dart:241:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\admin_dashboard.dart:253:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\admin_dashboard.dart:464:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\admin_dashboard.dart:468:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\admin_dashboard.dart:611:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\admin_dashboard.dart:932:40 - deprecated_member_use
+warning - Unused import: 'login_screen.dart' - lib\screens\ann_page.dart:13:8 - unused_import
+   info - Statements in an if should be enclosed in a block - lib\screens\ann_page.dart:368:35 - curly_braces_in_flow_control_structures
+   info - The local variable '_resolveVenue' starts with an underscore - lib\screens\ann_page.dart:428:12 - no_leading_underscores_for_local_identifiers
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\screens\ann_page.dart:503:19 - deprecated_member_use
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\screens\ann_page.dart:622:19 - deprecated_member_use
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\screens\ann_page.dart:642:19 - deprecated_member_use
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\screens\ann_page.dart:671:19 - deprecated_member_use
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\screens\ann_page.dart:680:19 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\screens\ann_page.dart:786:44 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\ann_page.dart:1068:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\ann_page.dart:1081:28 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\screens\ann_page.dart:1269:21 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\ann_page.dart:1288:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\ann_page.dart:1300:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\ann_page.dart:1337:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\ann_page.dart:1366:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\ann_page.dart:1395:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\ann_page.dart:1497:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\ann_page.dart:1498:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\ann_page.dart:1535:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\club.dart:270:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\club.dart:291:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\club.dart:340:49 - deprecated_member_use
+   info - 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead - lib\screens\club.dart:393:62 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\club.dart:402:57 - deprecated_member_use
+   info - Unnecessary use of multiple underscores - lib\screens\club.dart:461:66 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\screens\club.dart:461:70 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\screens\club.dart:466:68 - unnecessary_underscores
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:61:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:139:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:259:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:421:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:504:27 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:607:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:608:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:614:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:642:24 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:735:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:737:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:874:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:877:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:889:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:893:40 - deprecated_member_use
+   info - Unnecessary use of multiple underscores - lib\screens\clubdetail.dart:895:45 - unnecessary_underscores
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:952:47 - deprecated_member_use
+   info - Unnecessary use of multiple underscores - lib\screens\clubdetail.dart:1057:53 - unnecessary_underscores
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:1119:48 - deprecated_member_use
+   info - Unnecessary use of multiple underscores - lib\screens\clubdetail.dart:1139:37 - unnecessary_underscores
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:1170:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:1298:26 - deprecated_member_use
+   info - Unnecessary use of multiple underscores - lib\screens\clubdetail.dart:1312:33 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\screens\clubdetail.dart:1312:37 - unnecessary_underscores
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:1313:30 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:1324:61 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:1447:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\clubdetail.dart:1504:33 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps - lib\screens\event_receipt_page.dart:32:9 - use_build_context_synchronously
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\event_registration_form.dart:121:37 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\event_registration_form.dart:122:37 - deprecated_member_use
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\event_registration_form.dart:128:37 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\event_registration_form.dart:129:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\events.dart:339:50 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps - lib\screens\events.dart:623:7 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\hackathon_list.dart:467:27 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\hackathon_list.dart:572:36 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\hackathon_list.dart:573:35 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\hackathon_list.dart:706:34 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps - lib\screens\hackathon_list.dart:1131:27 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\hackathon_list.dart:1235:36 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\hackathon_list.dart:1236:35 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\home.dart:616:33 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps - lib\screens\login_screen.dart:68:38 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\login_screen.dart:129:62 - deprecated_member_use
+   info - Parameter 'key' could be a super parameter - lib\screens\participant_dashboard.dart:18:9 - use_super_parameters
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\participant_dashboard.dart:171:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\participant_dashboard.dart:182:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\participant_dashboard.dart:205:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\participant_dashboard.dart:211:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\participant_dashboard.dart:232:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\participant_dashboard.dart:258:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\participant_dashboard.dart:261:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\participant_dashboard.dart:264:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\participant_dashboard.dart:428:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\participant_dashboard.dart:450:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\participant_dashboard.dart:714:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\participant_dashboard.dart:890:40 - deprecated_member_use
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\registration_form.dart:251:25 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\registration_form.dart:252:25 - deprecated_member_use
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\registration_form.dart:257:25 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\registration_form.dart:258:25 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\signup_screen.dart:185:43 - deprecated_member_use
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\screens\signup_screen.dart:292:15 - deprecated_member_use
+   info - Unnecessary use of multiple underscores - lib\screens\splash_screen.dart:52:22 - unnecessary_underscores
+   info - Don't use 'BuildContext's across async gaps - lib\screens\splashscreen.dart:18:9 - use_build_context_synchronously
+   info - Unnecessary use of multiple underscores - lib\screens\splashscreen.dart:21:28 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\screens\splashscreen.dart:21:32 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\screens\splashscreen.dart:22:46 - unnecessary_underscores
+   info - Parameter 'key' could be a super parameter - lib\screens\streak_dashboard.dart:9:9 - use_super_parameters
+   info - Don't use 'BuildContext's across async gaps - lib\screens\workshop_list.dart:512:27 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\workshop_list.dart:615:36 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\workshop_list.dart:616:35 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workshop_list.dart:663:34 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps - lib\screens\workshop_list.dart:1020:27 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\workshop_list.dart:1120:36 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\workshop_list.dart:1121:35 - use_build_context_synchronously
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\workshop_registration_form.dart:265:35 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\workshop_registration_form.dart:266:35 - deprecated_member_use
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\workshop_registration_form.dart:272:35 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\workshop_registration_form.dart:273:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\word_search.dart:179:32 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps - lib\word_search.dart:190:13 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\word_search.dart:199:11 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\word_search.dart:393:9 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\word_search.dart:412:20 - use_build_context_synchronously
+   info - 'WillPopScope' is deprecated and shouldn't be used. Use PopScope instead. The Android predictive back feature will not work with WillPopScope. This feature was deprecated after v3.12.0-1.0.pre - lib\word_search.dart:475:12 - deprecated_member_use
+

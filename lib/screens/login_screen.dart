@@ -44,8 +44,9 @@ class _LoginScreenState extends State<LoginScreen> {
         return _alert('Login failed', 'Wrong credentials');
       }
 
-      final userRef =
-      FirebaseFirestore.instance.collection('users').doc(user.uid);
+      final userRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid);
       final roleSnap = await userRef.get();
       final role = roleSnap.data()?['role'] ?? 'Participant';
 
@@ -55,17 +56,16 @@ class _LoginScreenState extends State<LoginScreen> {
       // Optional: keep simple present flag per day (not used by streak logic)
       final today = DateTime.now();
       final todayStr = today.toIso8601String().substring(0, 10);
-      await userRef
-          .collection('login_history')
-          .doc(todayStr)
-          .set({'present': true}, SetOptions(merge: true));
+      await userRef.collection('login_history').doc(todayStr).set({
+        'present': true,
+      }, SetOptions(merge: true));
 
       if (!mounted) return;
 
       // You can save role if needed
       await saveRole(role);
 
-      Navigator.pushReplacementNamed(context, '/home1');
+      Navigator.pushReplacementNamed(context, '/home');
     } on FirebaseAuthException catch (e) {
       _alert('Firebase Error', e.message ?? 'Unknown error');
     } catch (e) {
@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: const Text('OK'),
-        )
+        ),
       ],
     ),
   );
@@ -103,19 +103,19 @@ class _LoginScreenState extends State<LoginScreen> {
     labelStyle: const TextStyle(color: Colors.white70),
     border: const OutlineInputBorder(),
     enabledBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.white54)),
+      borderSide: BorderSide(color: Colors.white54),
+    ),
     focusedBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.tealAccent)),
+      borderSide: BorderSide(color: Colors.tealAccent),
+    ),
     suffixIcon: lbl == 'Password'
         ? IconButton(
-      icon: Icon(
-        _obscurePassword
-            ? Icons.visibility
-            : Icons.visibility_off,
-        color: Colors.white70,
-      ),
-      onPressed: _togglePasswordVisibility,
-    )
+            icon: Icon(
+              _obscurePassword ? Icons.visibility : Icons.visibility_off,
+              color: Colors.white70,
+            ),
+            onPressed: _togglePasswordVisibility,
+          )
         : null,
   );
 
@@ -124,32 +124,27 @@ class _LoginScreenState extends State<LoginScreen> {
     body: Stack(
       children: [
         Positioned.fill(
-          child: Image.network(
-            'https://png.pngtree.com/thumb_back/fh260/background/20250320/pngtree-colorful-and-sweet-color-background-powerpoint-image_17115820.jpg',
-            fit: BoxFit.cover,
-          ),
+          child: Image.asset('assets/images/login_bg.jpg', fit: BoxFit.cover),
         ),
-        Positioned.fill(
-          child: Container(color: Colors.black.withOpacity(.65)),
-        ),
+        Positioned.fill(child: Container(color: Colors.black.withOpacity(.65))),
         LayoutBuilder(
           builder: (ctx, c) {
             final wide = c.maxWidth > 800;
             return wide
                 ? Row(
-              children: [
-                _leftTagline(expanded: true),
-                Expanded(child: _form()),
-              ],
-            )
+                    children: [
+                      _leftTagline(expanded: true),
+                      Expanded(child: _form()),
+                    ],
+                  )
                 : ListView(
-              padding: const EdgeInsets.all(24),
-              children: [
-                _leftTagline(),
-                const SizedBox(height: 20),
-                _form(),
-              ],
-            );
+                    padding: const EdgeInsets.all(24),
+                    children: [
+                      _leftTagline(),
+                      const SizedBox(height: 20),
+                      _form(),
+                    ],
+                  );
           },
         ),
       ],
@@ -160,8 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
       expanded ? Expanded(child: _tagline()) : _tagline();
 
   Widget _tagline() => Padding(
-    padding:
-    const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,8 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               TextSpan(
                 text: 'Welcome to ',
-                style:
-                TextStyle(fontSize: 38, color: Colors.white70),
+                style: TextStyle(fontSize: 38, color: Colors.white70),
               ),
               TextSpan(
                 text: 'Eventra!',
@@ -223,18 +216,14 @@ class _LoginScreenState extends State<LoginScreen> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.tealAccent,
-                padding:
-                const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: _login,
-              child: const Text(
-                'Login',
-                style: TextStyle(color: Colors.white),
-              ),
+              child: const Text('Login', style: TextStyle(color: Colors.white)),
             ),
             TextButton(
-              onPressed: () => Navigator.pushReplacementNamed(
-                  context, '/signup'),
+              onPressed: () =>
+                  Navigator.pushReplacementNamed(context, '/signup'),
               child: const Text(
                 "Don't have an account? Sign up",
                 style: TextStyle(color: Colors.white70),
