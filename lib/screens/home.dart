@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'ann_page.dart';
-import 'login_screen.dart';
 import 'hackathon_list.dart';
 import 'streak_dashboard.dart';
 import 'participant_dashboard.dart';
@@ -21,23 +20,19 @@ class HomeScreen extends StatefulWidget {
   final bool isAdmin;
 
   const HomeScreen({
-    Key? key,
+    super.key,
     required this.onToggleTheme,
     required this.isDark,
     this.isAdmin = false,
-  }) : super(key: key);
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with WidgetsBindingObserver {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late Duration timeLeft;
   late Timer _timer;
-
-  String _searchQuery = '';
-  String _filter = 'All';
 
   // 0 = Announcements, 1 = Home, 2 = Profile
   int _bottomIndex = 1;
@@ -51,14 +46,11 @@ class _HomeScreenState extends State<HomeScreen>
     WidgetsBinding.instance.addObserver(this);
 
     timeLeft = kEventStart.difference(DateTime.now());
-    _timer = Timer.periodic(
-      const Duration(seconds: 1),
-          (_) {
-        setState(() {
-          timeLeft = kEventStart.difference(DateTime.now());
-        });
-      },
-    );
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      setState(() {
+        timeLeft = kEventStart.difference(DateTime.now());
+      });
+    });
 
     _checkAndUpdateDailyVisit();
   }
@@ -89,12 +81,13 @@ class _HomeScreenState extends State<HomeScreen>
     final today = DateTime(now.year, now.month, now.day);
     final todayStr = DateFormat('yyyy-MM-dd').format(today);
 
-    final userRef =
-    FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid);
 
     await FirebaseFirestore.instance.runTransaction((tx) async {
       final snap = await tx.get(userRef);
-      final data = snap.data() as Map<String, dynamic>? ?? {};
+      final data = snap.data() ?? {};
 
       int currentStreak = data['streak'] ?? 0;
       final String? lastVisitStr = data['lastVisitDate'];
@@ -103,8 +96,11 @@ class _HomeScreenState extends State<HomeScreen>
         currentStreak = 1;
       } else {
         final lastVisit = DateTime.parse(lastVisitStr);
-        final lastDay =
-        DateTime(lastVisit.year, lastVisit.month, lastVisit.day);
+        final lastDay = DateTime(
+          lastVisit.year,
+          lastVisit.month,
+          lastVisit.day,
+        );
         final diff = today.difference(lastDay).inDays;
 
         if (diff == 0) {
@@ -117,13 +113,9 @@ class _HomeScreenState extends State<HomeScreen>
         }
       }
 
-      tx.update(userRef, {
-        'streak': currentStreak,
-        'lastVisitDate': todayStr,
-      });
+      tx.update(userRef, {'streak': currentStreak, 'lastVisitDate': todayStr});
 
-      final historyRef =
-      userRef.collection('login_history').doc(todayStr);
+      final historyRef = userRef.collection('login_history').doc(todayStr);
       tx.set(historyRef, {
         'visited': true,
         'timestamp': FieldValue.serverTimestamp(),
@@ -151,38 +143,6 @@ class _HomeScreenState extends State<HomeScreen>
         .map((snap) => snap.docs.length);
   }
 
-  final List<Map<String, String>> _allEvents = const [
-    {
-      'title': 'Flutter Workshop',
-      'desc': 'Hands-on mobile dev session.',
-      'type': 'Workshop',
-      'img':
-      'https://images.unsplash.com/photo-1581093588401-90ac6b69423c?auto=format&fit=crop&w=800&q=60'
-    },
-    {
-      'title': 'AI Quiz League',
-      'desc': 'Compete with AI enthusiasts.',
-      'type': 'Daily contest',
-      'img':
-      'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=60'
-    },
-    {
-      'title': 'Campus Hack 2025',
-      'desc': '24‑hour coding sprint.',
-      'type': 'Hackathon',
-      'img':
-      'https://images.unsplash.com/photo-1542831371-d531d36971e6?auto=format&fit=crop&w=800&q=60'
-    },
-  ];
-
-  List<Map<String, String>> get _visibleEvents => _allEvents.where((ev) {
-    final matchSearch = ev['title']!
-        .toLowerCase()
-        .contains(_searchQuery.toLowerCase());
-    final matchFilter = _filter == 'All' ? true : ev['type'] == _filter;
-    return matchSearch && matchFilter;
-  }).toList();
-
   // ---------- MAIN BUILD ----------
   @override
   Widget build(BuildContext context) {
@@ -193,9 +153,7 @@ class _HomeScreenState extends State<HomeScreen>
     if (_bottomIndex == 1) {
       body = _homeTab(isWide, size);
     } else if (_bottomIndex == 0) {
-      body = AnnouncementPage(
-        onToggleTheme: widget.onToggleTheme,
-      );
+      body = AnnouncementPage(onToggleTheme: widget.onToggleTheme);
     } else {
       body = const ParticipantDashboard();
     }
@@ -204,24 +162,36 @@ class _HomeScreenState extends State<HomeScreen>
       drawer: _buildDrawer(),
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(child: body),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _bottomIndex,
-        onTap: (i) => setState(() => _bottomIndex = i),
-        selectedItemColor: Colors.teal,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_none),
-            label: 'Announcements',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_filled),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('announcements').snapshots(),
+        builder: (context, snapshot) {
+          int unreadCount = 0;
+          if (snapshot.hasData) {
+            final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+            for (var doc in snapshot.data!.docs) {
+              final data = doc.data() as Map<String, dynamic>;
+              final readBy = List<String>.from(data['readBy'] ?? []);
+              if (!readBy.contains(uid)) unreadCount++;
+            }
+          }
+          return BottomNavigationBar(
+            currentIndex: _bottomIndex,
+            onTap: (i) => setState(() => _bottomIndex = i),
+            selectedItemColor: Colors.teal,
+            items: [
+              BottomNavigationBarItem(
+                icon: Badge(
+                  isLabelVisible: unreadCount > 0,
+                  label: Text('$unreadCount'),
+                  child: const Icon(Icons.notifications_none),
+                ),
+                label: 'Announcements',
+              ),
+              const BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
+              const BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+            ],
+          );
+        },
       ),
     );
   }
@@ -244,18 +214,15 @@ class _HomeScreenState extends State<HomeScreen>
             padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
             child: Text(
               '',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
         ),
         _quickGrid(isWide),
         const SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-          ),
+          child: Padding(padding: EdgeInsets.symmetric(vertical: 12)),
         ),
         const SliverToBoxAdapter(
           child: Padding(
@@ -273,16 +240,37 @@ class _HomeScreenState extends State<HomeScreen>
         children: [
           DrawerHeader(
             decoration: const BoxDecoration(color: Colors.teal),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                CircleAvatar(radius: 28, backgroundColor: Colors.white),
-                SizedBox(height: 12),
-                Text(
-                  'Eventra Menu',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ],
+            child: StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(FirebaseAuth.instance.currentUser?.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                String? photoUrl;
+                String name = 'Eventra Menu';
+                if (snapshot.hasData && snapshot.data!.data() != null) {
+                  final data = snapshot.data!.data() as Map<String, dynamic>;
+                  photoUrl = data['profileImage'];
+                  name = data['name'] ?? name;
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 28,
+                      backgroundColor: Colors.white,
+                      backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+                      child: photoUrl == null ? const Icon(Icons.person, size: 30, color: Colors.teal) : null,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      name,
+                      style: const TextStyle(color: Colors.white, fontSize: 18),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                );
+              },
             ),
           ),
           ListTile(
@@ -301,9 +289,7 @@ class _HomeScreenState extends State<HomeScreen>
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const HackathonListPage(),
-                ),
+                MaterialPageRoute(builder: (_) => const HackathonListPage()),
               );
             },
           ),
@@ -314,9 +300,7 @@ class _HomeScreenState extends State<HomeScreen>
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const WorkshopListPage(),
-                ),
+                MaterialPageRoute(builder: (_) => const WorkshopListPage()),
               );
             },
           ),
@@ -327,9 +311,7 @@ class _HomeScreenState extends State<HomeScreen>
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const ClubHubHomePage(),
-                ),
+                MaterialPageRoute(builder: (_) => const ClubHubHomePage()),
               );
             },
           ),
@@ -340,9 +322,7 @@ class _HomeScreenState extends State<HomeScreen>
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const DailyContestPage(),
-                ),
+                MaterialPageRoute(builder: (_) => const DailyContestPage()),
               );
             },
           ),
@@ -354,16 +334,17 @@ class _HomeScreenState extends State<HomeScreen>
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => AnnouncementPage(
-                    onToggleTheme: widget.onToggleTheme,
-                  ),
+                  builder: (_) =>
+                      AnnouncementPage(onToggleTheme: widget.onToggleTheme),
                 ),
               );
             },
           ),
           ListTile(
-            leading: const Icon(Icons.local_fire_department,
-                color: Colors.deepOrange),
+            leading: const Icon(
+              Icons.local_fire_department,
+              color: Colors.deepOrange,
+            ),
             title: const Text('Streak dashboard'),
             onTap: () {
               Navigator.pop(context);
@@ -372,8 +353,7 @@ class _HomeScreenState extends State<HomeScreen>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) =>
-                        StreakDashboard(userId: user.uid),
+                    builder: (_) => StreakDashboard(userId: user.uid),
                   ),
                 );
               }
@@ -386,10 +366,13 @@ class _HomeScreenState extends State<HomeScreen>
             onTap: () async {
               Navigator.pop(context);
               await FirebaseAuth.instance.signOut();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
-              );
+              if (mounted) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/login',
+                  (route) => false,
+                );
+              }
             },
           ),
           const SizedBox(height: 8),
@@ -447,6 +430,11 @@ class _HomeScreenState extends State<HomeScreen>
             },
           ),
           IconButton(
+            tooltip: 'Refresh',
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: () => setState(() {}),
+          ),
+          IconButton(
             tooltip: 'Toggle theme',
             icon: Icon(
               widget.isDark ? Icons.light_mode : Icons.dark_mode,
@@ -458,8 +446,7 @@ class _HomeScreenState extends State<HomeScreen>
             onTap: () => setState(() => _bottomIndex = 2),
             child: const CircleAvatar(
               radius: 18,
-              backgroundImage:
-              NetworkImage('https://i.pravatar.cc/150?img=4'),
+              backgroundImage: const AssetImage('assets/images/logo1.jpeg'),
             ),
           ),
           const SizedBox(width: 8),
@@ -510,10 +497,7 @@ class _HomeScreenState extends State<HomeScreen>
           size: 18,
           color: Colors.orange,
         ),
-        label: Text(
-          '$streak',
-          style: const TextStyle(color: Colors.black),
-        ),
+        label: Text('$streak', style: const TextStyle(color: Colors.black)),
       ),
     );
   }
@@ -526,17 +510,13 @@ class _HomeScreenState extends State<HomeScreen>
       ('Boost', 4, Icons.trending_down),
     ];
     return Row(
-      mainAxisAlignment:
-      wide ? MainAxisAlignment.start : MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: wide
+          ? MainAxisAlignment.start
+          : MainAxisAlignment.spaceBetween,
       children: stats
           .map(
-            (s) => _analytic(
-          title: s.$1,
-          count: s.$2,
-          icon: s.$3,
-          wide: wide,
-        ),
-      )
+            (s) => _analytic(title: s.$1, count: s.$2, icon: s.$3, wide: wide),
+          )
           .toList(),
     );
   }
@@ -561,8 +541,7 @@ class _HomeScreenState extends State<HomeScreen>
           Icon(icon, color: Colors.teal),
           Text(
             '$count',
-            style: const TextStyle(
-                fontSize: 20, fontWeight: FontWeight.w700),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
           ),
           Text(title),
         ],
@@ -579,11 +558,7 @@ class _HomeScreenState extends State<HomeScreen>
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 6,
-            offset: Offset(0, 3),
-          )
+          BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 3)),
         ],
       ),
       alignment: Alignment.center,
@@ -629,22 +604,15 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget _quickTile(IconData ic, String label) {
     const photos = {
-      'Hackathons':
-      'https://cdn.dribbble.com/userupload/22803462/file/original-c8e0d2ce8435353e386bf621e0e9c410.gif',
-      'Workshops':
-      'https://cdn.dribbble.com/userupload/20282516/file/original-a94a7235de230dbb66ffd697473f8b36.gif',
-      'Club\nActivities':
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBuE8lKn_vkrUj-N0fhzVIur3JwHA9d2eToF6wQXrbSxA3zp5Ean8gxwv35OLkU4ALQ6M&usqp=CAU',
-      'Daily contest':
-      'https://cdn.pixabay.com/animation/2022/11/01/18/38/18-38-04-285_512.gif',
-      'Announcements':
-      'https://assets-v2.lottiefiles.com/a/79bf2f40-1174-11ee-9faf-fb0a1e9de6a4/NNsGv4eVNs.gif',
-      'Fests':
-      'https://assets-v2.lottiefiles.com/a/396a815c-1164-11ee-ab1f-673accc5fb2e/Nu8f6ibV0J.gif',
+      'Hackathons': 'assets/images/img.png',
+      'Workshops': 'assets/images/img.png',
+      'Club\nActivities': 'assets/images/img.png',
+      'Daily contest': 'assets/images/img.png',
+      'Announcements': 'assets/images/img.png',
+      'Fests': 'assets/images/img.png',
     };
     final w = MediaQuery.of(context).size.width;
-    final fallback =
-        'https://images.unsplash.com/photo-1515169067865-5387ec356754?auto=format&fit=crop&w=600&q=60';
+    final fallback = 'assets/images/img.png';
     final img = w < 450 ? fallback : (photos[label] ?? fallback);
 
     return InkWell(
@@ -677,7 +645,7 @@ class _HomeScreenState extends State<HomeScreen>
       child: Ink(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          image: DecorationImage(image: NetworkImage(img), fit: BoxFit.cover),
+          image: DecorationImage(image: AssetImage(img), fit: BoxFit.cover),
         ),
         child: Container(
           decoration: BoxDecoration(
@@ -704,21 +672,6 @@ class _HomeScreenState extends State<HomeScreen>
       ),
     );
   }
-
-  Widget _bubble(IconData ic) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 12),
-      child: Ink(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(ic, size: 22, color: Colors.teal),
-      ),
-    );
-  }
 }
 
 // ---------- GRADIENT TEXT ----------
@@ -733,9 +686,7 @@ class _GradientText extends StatelessWidget {
     return ShaderMask(
       shaderCallback: (bounds) => const LinearGradient(
         colors: [Color(0xFF147B8E), Color(0xFF2BB673)],
-      ).createShader(
-        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-      ),
+      ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
       blendMode: BlendMode.srcIn,
       child: Text(
         text,

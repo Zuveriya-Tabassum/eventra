@@ -195,6 +195,12 @@ class _WorkshopListPageState extends State<WorkshopListPage>
         ),
         title: const Text('Workshops'),
         backgroundColor: Colors.teal,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: () => setState(() {}),
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.white,
@@ -641,7 +647,7 @@ class _WorkshopCardState extends State<WorkshopCard>
               const Icon(Icons.person_off, size: 48, color: Colors.grey),
               const Text('Please login to view workshops'),
               ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, '/login'),
+                onPressed: () => Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false),
                 child: const Text('Login'),
               ),
             ],

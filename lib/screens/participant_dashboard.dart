@@ -6,9 +6,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 import 'streak_dashboard.dart';
 import 'hackathon_list.dart';
@@ -68,8 +68,7 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final pickedFile =
-    await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() => _imageFile = File(pickedFile.path));
     }
@@ -77,22 +76,45 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
 
   Future<void> _saveProfile() async {
     if (!_formKey.currentState!.validate() || user == null) return;
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user!.uid)
-        .update({
+    
+    String? newImageUrl = _profileImageUrl;
+
+    if (_imageFile != null) {
+      try {
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('profile_images')
+            .child('${user!.uid}.jpg');
+        await ref.putFile(_imageFile!);
+        newImageUrl = await ref.getDownloadURL();
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to upload image: $e')),
+          );
+        }
+      }
+    }
+
+    await FirebaseFirestore.instance.collection('users').doc(user!.uid).update({
       'name': _nameController.text,
       'phone': _phoneController.text,
       'bio': _bioController.text,
       'department': _departmentController.text,
       'year': _yearController.text,
+      if (newImageUrl != null) 'profileImage': newImageUrl,
       'updatedAt': FieldValue.serverTimestamp(),
     });
-    setState(() => _isEditing = false);
+    
+    setState(() {
+      _isEditing = false;
+      if (newImageUrl != null) _profileImageUrl = newImageUrl;
+    });
+    
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated!')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Profile updated!')));
     }
   }
 
@@ -122,15 +144,19 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: () => setState(() {}),
+          ),
           !_isEditing
               ? IconButton(
-            icon: const Icon(Icons.edit, color: Colors.white),
-            onPressed: () => setState(() => _isEditing = true),
-          )
+                  icon: const Icon(Icons.edit, color: Colors.white),
+                  onPressed: () => setState(() => _isEditing = true),
+                )
               : IconButton(
-            icon: const Icon(Icons.save, color: Colors.white),
-            onPressed: _saveProfile,
-          ),
+                  icon: const Icon(Icons.save, color: Colors.white),
+                  onPressed: _saveProfile,
+                ),
         ],
       ),
       body: Container(
@@ -138,11 +164,7 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF53C6BE),
-              Color(0xFFE7FCFF),
-              Color(0xFFFFFFFF),
-            ],
+            colors: [Color(0xFF53C6BE), Color(0xFFE7FCFF), Color(0xFFFFFFFF)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -156,8 +178,7 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
             builder: (context, snapshot) {
               int streak = 0;
               if (snapshot.hasData && snapshot.data!.data() != null) {
-                final data =
-                snapshot.data!.data() as Map<String, dynamic>;
+                final data = snapshot.data!.data() as Map<String, dynamic>;
                 streak = data['streak'] ?? 0;
                 _profileImageUrl ??= data['profileImage'];
               }
@@ -172,7 +193,11 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
                         padding: const EdgeInsets.fromLTRB(40, 32, 8, 32),
                         child: _glassBox(
                           child: _buildProfileColumn(
-                              context, streak, userId, true),
+                            context,
+                            streak,
+                            userId,
+                            true,
+                          ),
                           blur: 18,
                           bg: Colors.white.withOpacity(0.25),
                         ),
@@ -194,13 +219,19 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
               } else {
                 return SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 16),
+                    horizontal: 10,
+                    vertical: 16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       _glassBox(
                         child: _buildProfileColumn(
-                            context, streak, userId, false),
+                          context,
+                          streak,
+                          userId,
+                          false,
+                        ),
                         blur: 18,
                         bg: Colors.white.withOpacity(0.27),
                       ),
@@ -221,11 +252,7 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
     );
   }
 
-  Widget _glassBox({
-    required Widget child,
-    double blur = 12,
-    Color? bg,
-  }) {
+  Widget _glassBox({required Widget child, double blur = 12, Color? bg}) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(30),
       child: BackdropFilter(
@@ -234,8 +261,7 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
           duration: const Duration(milliseconds: 300),
           width: double.infinity,
           color: bg ?? Colors.white.withOpacity(.17),
-          padding:
-          const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           margin: const EdgeInsets.symmetric(vertical: 6),
           child: child,
         ),
@@ -245,7 +271,11 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
 
   // ---------- PROFILE COLUMN ----------
   Widget _buildProfileColumn(
-      BuildContext context, int streak, String userId, bool wide) {
+    BuildContext context,
+    int streak,
+    String userId,
+    bool wide,
+  ) {
     return Form(
       key: _formKey,
       child: Column(
@@ -256,26 +286,25 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
             children: [
               CircleAvatar(
                 radius: wide ? 68 : 55,
-                backgroundColor:
-                Colors.teal.shade300.withOpacity(.23),
+                backgroundColor: Colors.teal.shade300.withOpacity(.23),
                 child: CircleAvatar(
                   radius: wide ? 61 : 47,
-                  backgroundColor:
-                  Colors.white.withOpacity(.14),
+                  backgroundColor: Colors.white.withOpacity(.14),
                   child: CircleAvatar(
                     radius: wide ? 53 : 39,
-                    backgroundColor:
-                    Colors.white.withOpacity(.15),
+                    backgroundColor: Colors.white.withOpacity(.15),
                     backgroundImage: _imageFile != null
                         ? FileImage(_imageFile!)
                         : (_profileImageUrl != null
-                        ? NetworkImage(_profileImageUrl!)
-                        : null)
-                    as ImageProvider?,
-                    child: _imageFile == null &&
-                        _profileImageUrl == null
-                        ? const Icon(Icons.person,
-                        size: 43, color: Colors.white)
+                                  ? NetworkImage(_profileImageUrl!)
+                                  : null)
+                              as ImageProvider?,
+                    child: _imageFile == null && _profileImageUrl == null
+                        ? const Icon(
+                            Icons.person,
+                            size: 43,
+                            color: Colors.white,
+                          )
                         : null,
                   ),
                 ),
@@ -289,8 +318,11 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
                     child: const CircleAvatar(
                       backgroundColor: Colors.teal,
                       radius: 20,
-                      child: Icon(Icons.camera_alt,
-                          color: Colors.white, size: 16),
+                      child: Icon(
+                        Icons.camera_alt,
+                        color: Colors.white,
+                        size: 16,
+                      ),
                     ),
                   ),
                 ),
@@ -299,34 +331,33 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
           const SizedBox(height: 18),
           _isEditing
               ? TextFormField(
-            controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'Name',
-              filled: true,
-              fillColor: Colors.white70,
-            ),
-            validator: (v) =>
-            v!.isEmpty ? 'Name required' : null,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: wide ? 26 : 20,
-              color: Colors.teal.shade900,
-              letterSpacing: 1.15,
-            ),
-          )
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Name',
+                    filled: true,
+                    fillColor: Colors.white70,
+                  ),
+                  validator: (v) => v!.isEmpty ? 'Name required' : null,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: wide ? 26 : 20,
+                    color: Colors.teal.shade900,
+                    letterSpacing: 1.15,
+                  ),
+                )
               : Text(
-            _nameController.text.isEmpty
-                ? 'Your Name'
-                : _nameController.text,
-            style: TextStyle(
-              fontSize: wide ? 26 : 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.teal[900],
-              letterSpacing: 1.1,
-            ),
-            textAlign: TextAlign.center,
-          ),
+                  _nameController.text.isEmpty
+                      ? 'Your Name'
+                      : _nameController.text,
+                  style: TextStyle(
+                    fontSize: wide ? 26 : 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.teal[900],
+                    letterSpacing: 1.1,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
           const SizedBox(height: 3),
           Text(
             user?.email ?? '',
@@ -340,8 +371,11 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _statChip(Icons.local_fire_department,
-                  streak.toString(), Colors.orange),
+              _statChip(
+                Icons.local_fire_department,
+                streak.toString(),
+                Colors.orange,
+              ),
               const SizedBox(width: 10),
               StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -350,36 +384,43 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
                     .collection('login_history')
                     .snapshots(),
                 builder: (context, snap) {
-                  int logins = snap.hasData
-                      ? snap.data!.docs.length
-                      : 0;
-                  return _statChip(
-                      Icons.login, logins.toString(), Colors.blue);
+                  int logins = snap.hasData ? snap.data!.docs.length : 0;
+                  return _statChip(Icons.login, logins.toString(), Colors.blue);
                 },
               ),
             ],
           ),
           const SizedBox(height: 19),
+          _profileDetailRow(Icons.phone, "Phone", _phoneController, _isEditing),
+          const SizedBox(height: 7),
           _profileDetailRow(
-              Icons.phone, "Phone", _phoneController, _isEditing),
+            Icons.school,
+            "Department",
+            _departmentController,
+            _isEditing,
+          ),
           const SizedBox(height: 7),
-          _profileDetailRow(Icons.school, "Department",
-              _departmentController, _isEditing),
+          _profileDetailRow(
+            Icons.calendar_today,
+            "Year",
+            _yearController,
+            _isEditing,
+          ),
           const SizedBox(height: 7),
-          _profileDetailRow(Icons.calendar_today, "Year",
-              _yearController, _isEditing),
-          const SizedBox(height: 7),
-          _profileDetailRow(Icons.info_outline, "Bio",
-              _bioController, _isEditing,
-              maxLines: 3),
+          _profileDetailRow(
+            Icons.info_outline,
+            "Bio",
+            _bioController,
+            _isEditing,
+            maxLines: 3,
+          ),
           const SizedBox(height: 19),
           ElevatedButton.icon(
             icon: const Icon(Icons.bar_chart),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.teal.shade400,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 18, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -393,8 +434,7 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) =>
-                        StreakDashboard(userId: userId),
+                    builder: (_) => StreakDashboard(userId: userId),
                   ),
                 );
               }
@@ -417,77 +457,72 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
       ),
       avatar: Icon(icon, color: color, size: 20),
       backgroundColor: Colors.white.withOpacity(0.17),
-      labelPadding:
-      const EdgeInsets.symmetric(horizontal: 8),
+      labelPadding: const EdgeInsets.symmetric(horizontal: 8),
       padding: const EdgeInsets.all(3),
     );
   }
 
   Widget _profileDetailRow(
-      IconData icon,
-      String label,
-      TextEditingController controller,
-      bool isEditing, {
-        int maxLines = 1,
-      }) {
+    IconData icon,
+    String label,
+    TextEditingController controller,
+    bool isEditing, {
+    int maxLines = 1,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: isEditing
           ? TextFormField(
-        controller: controller,
-        maxLines: maxLines,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon:
-          Icon(icon, color: Colors.teal.shade600),
-          fillColor:
-          Colors.white.withOpacity(.11),
-          filled: true,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          labelStyle:
-          const TextStyle(color: Colors.black45),
-        ),
-      )
-          : Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon,
-              color: Colors.teal.shade800, size: 18),
-          const SizedBox(width: 11),
-          Expanded(
-            child: RichText(
-              text: TextSpan(
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Colors.teal,
-                  fontWeight: FontWeight.w500,
+              controller: controller,
+              maxLines: maxLines,
+              decoration: InputDecoration(
+                labelText: label,
+                prefixIcon: Icon(icon, color: Colors.teal.shade600),
+                fillColor: Colors.white.withOpacity(.11),
+                filled: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                children: [
-                  TextSpan(
-                    text: "$label: ",
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  TextSpan(
-                    text: controller.text.isEmpty
-                        ? 'Not provided'
-                        : controller.text,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal,
-                    ),
-                  ),
-                ],
+                labelStyle: const TextStyle(color: Colors.black45),
               ),
+            )
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(icon, color: Colors.teal.shade800, size: 18),
+                const SizedBox(width: 11),
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.teal,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: "$label: ",
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        TextSpan(
+                          text: controller.text.isEmpty
+                              ? 'Not provided'
+                              : controller.text,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -496,93 +531,93 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-      Text(
-      'Your Event Participation',
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 18,
-        color: Colors.teal.shade800,
-      ),
-    ),
-    const SizedBox(height: 10),
-    _EnrollmentPieChart(userId: userId),
-    const SizedBox(height: 16),
-    _PerformanceLineChart(userId: userId),
-    const SizedBox(height: 16),
-    Wrap(
-    spacing: 10,
-    runSpacing: 8,
-    children: [
-    OutlinedButton.icon(
-    icon: const Icon(Icons.bolt, size: 18),
-    style: OutlinedButton.styleFrom(
-    foregroundColor: Colors.deepPurple,
-    side: BorderSide(
-    color: Colors.deepPurple.shade200),
-    padding: const EdgeInsets.symmetric(
-    horizontal: 10, vertical: 8),
-    shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(14),
-    ),
-    ),
-    label: const Text('View Hackathons'),
-    onPressed: () {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (_) => const HackathonListPage(),
-    ),
-    );
-    },
-    ),
-    OutlinedButton.icon(
-    icon: const Icon(Icons.school, size: 18),
-    style: OutlinedButton.styleFrom(
-    foregroundColor: Colors.orange,
-    side: BorderSide(color: Colors.orange.shade200),
-    padding: const EdgeInsets.symmetric(
-    horizontal: 10, vertical: 8),
-    shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(14),
-    ),
-    ),
-    label: const Text('View Workshops'),
-    onPressed: () {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (_) =>
-    const WorkshopListPage(),
-    ),
-    );
-    },
-    ),
-    OutlinedButton.icon(
-    icon: const Icon(Icons.event_note, size: 18),
-    style: OutlinedButton.styleFrom(
-    foregroundColor: Colors.teal,
-    side: BorderSide(color: Colors.teal.shade200),
-    padding: const EdgeInsets.symmetric(
-    horizontal: 10, vertical: 8),
-    shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(14),
-    ),
-    ),
-    label: const Text('All Events'),
-    onPressed: () {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (_) => ClubEventListPage(
-      isAdmin: false,
-      currentUserId: userId,
-    ),
-    ),
-    );
-    },
-    ),
-    ],
-    ),
+        Text(
+          'Your Event Participation',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: Colors.teal.shade800,
+          ),
+        ),
+        const SizedBox(height: 10),
+        _EnrollmentPieChart(userId: userId),
+        const SizedBox(height: 16),
+        _PerformanceLineChart(userId: userId),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 10,
+          runSpacing: 8,
+          children: [
+            OutlinedButton.icon(
+              icon: const Icon(Icons.bolt, size: 18),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.deepPurple,
+                side: BorderSide(color: Colors.deepPurple.shade200),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              label: const Text('View Hackathons'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HackathonListPage()),
+                );
+              },
+            ),
+            OutlinedButton.icon(
+              icon: const Icon(Icons.school, size: 18),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.orange,
+                side: BorderSide(color: Colors.orange.shade200),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              label: const Text('View Workshops'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const WorkshopListPage()),
+                );
+              },
+            ),
+            OutlinedButton.icon(
+              icon: const Icon(Icons.event_note, size: 18),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.teal,
+                side: BorderSide(color: Colors.teal.shade200),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              label: const Text('All Events'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ClubEventListPage(
+                      isAdmin: false,
+                      currentUserId: userId,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
         const SizedBox(height: 20),
         Text(
           'Enrolled Events',
@@ -608,10 +643,7 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
           ),
         ),
         const SizedBox(height: 8),
-        _EnrolledEventsList(
-          userId: userId,
-          filter: _enrolledFilter,
-        ),
+        _EnrolledEventsList(userId: userId, filter: _enrolledFilter),
         const SizedBox(height: 20),
         // Leaderboard Section
         FutureBuilder<Map<String, dynamic>>(
@@ -623,7 +655,8 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
             final data = snapshot.data!;
             final userRank = data['userRank'];
             final totalUsers = data['totalUsers'];
-            final percentile = ((totalUsers - userRank + 1) / totalUsers * 100).round();
+            final percentile = ((totalUsers - userRank + 1) / totalUsers * 100)
+                .round();
             return Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -680,20 +713,21 @@ class _ParticipantDashboardState extends State<ParticipantDashboard> {
   }
 
   Future<Map<String, dynamic>> _fetchLeaderboardData(String userId) async {
-    final usersSnap = await FirebaseFirestore.instance.collection('users').get();
+    final usersSnap = await FirebaseFirestore.instance
+        .collection('users')
+        .get();
     final users = usersSnap.docs.map((doc) {
       final data = doc.data();
       return {
         'id': doc.id,
-        'score': data['totalScore'] ?? 0,  // Assuming totalScore is precomputed: 2*hackathons + workshops + quizzes
+        'score':
+            data['totalScore'] ??
+            0, // Assuming totalScore is precomputed: 2*hackathons + workshops + quizzes
       };
     }).toList();
     users.sort((a, b) => b['score'].compareTo(a['score']));
     int userRank = users.indexWhere((u) => u['id'] == userId) + 1;
-    return {
-      'userRank': userRank,
-      'totalUsers': users.length,
-    };
+    return {'userRank': userRank, 'totalUsers': users.length};
   }
 
   Widget _buildFilterChip(String label) {
@@ -824,20 +858,16 @@ class _PerformanceLineChart extends StatelessWidget {
 
         if (docs.isEmpty) {
           labels = List.generate(7, (i) => '--');
-          scoreSpots =
-              List.generate(7, (i) => FlSpot(i.toDouble(), 0.0));
+          scoreSpots = List.generate(7, (i) => FlSpot(i.toDouble(), 0.0));
         } else {
-          labels = docs
-              .map((d) => (d['date'] as String).substring(5))
-              .toList();
+          labels = docs.map((d) => (d['date'] as String).substring(5)).toList();
           for (int i = 0; i < docs.length; i++) {
             final d = docs[i].data() as Map<String, dynamic>;
             final h = (d['hackathon'] ?? 0).toDouble();
             final w = (d['workshop'] ?? 0).toDouble();
             final q = (d['quiz'] ?? 0).toDouble();
             final score = 2 * h + w + q;
-            scoreSpots.add(
-                FlSpot(i.toDouble(), score.toDouble()));
+            scoreSpots.add(FlSpot(i.toDouble(), score.toDouble()));
           }
         }
 
@@ -853,10 +883,7 @@ class _PerformanceLineChart extends StatelessWidget {
                     reservedSize: 30,
                     getTitlesWidget: (value, meta) => Text(
                       '${value.toInt()}',
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: Colors.teal,
-                      ),
+                      style: const TextStyle(fontSize: 10, color: Colors.teal),
                     ),
                   ),
                 ),
@@ -868,8 +895,7 @@ class _PerformanceLineChart extends StatelessWidget {
                       if (i >= 0 && i < labels.length) {
                         return Text(
                           labels[i],
-                          style:
-                          const TextStyle(fontSize: 11),
+                          style: const TextStyle(fontSize: 11),
                         );
                       }
                       return const Text('');
@@ -909,10 +935,7 @@ class _PerformanceLineChart extends StatelessWidget {
 class _EnrolledEventsList extends StatelessWidget {
   final String userId;
   final String filter;
-  const _EnrolledEventsList({
-    required this.userId,
-    required this.filter,
-  });
+  const _EnrolledEventsList({required this.userId, required this.filter});
 
   @override
   Widget build(BuildContext context) {
@@ -948,9 +971,7 @@ class _EnrolledEventsList extends StatelessWidget {
               leading: const Icon(Icons.event, color: Colors.teal),
               title: Text(
                 data['eventName'] ?? 'Event',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
               subtitle: Text(type.toString()),
             );

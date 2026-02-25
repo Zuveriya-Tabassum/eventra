@@ -37,11 +37,12 @@ Future<void> saveWordSearchToLeaderboard({
   final prefs = await SharedPreferences.getInstance();
 
   final playerId =
-      prefs.getString('playerId') ?? 'guest_${DateTime.now().millisecondsSinceEpoch}';
+      prefs.getString('playerId') ??
+      'guest_${DateTime.now().millisecondsSinceEpoch}';
   final playerName =
       prefs.getString('playerName') ??
-          prefs.getString('displayName') ??
-          'Player';
+      prefs.getString('displayName') ??
+      'Player';
 
   // 1️⃣ Register player for today
   List<String> ids = prefs.getStringList("daily_players_$todayKey") ?? [];
@@ -63,23 +64,28 @@ Future<void> saveWordSearchToLeaderboard({
     "played": true,
   };
 
-  playerData['totalTime'] =
-      (playerData['totalTime'] ?? 0) + timeSpentSeconds;
+  playerData['totalTime'] = (playerData['totalTime'] ?? 0) + timeSpentSeconds;
 
-  await prefs.setString(
-      "player_${playerId}_$todayKey", jsonEncode(playerData));
+  await prefs.setString("player_${playerId}_$todayKey", jsonEncode(playerData));
 
   // 4️⃣ Lock attempt for today
   await prefs.setBool(
-      'word_search_${Difficulty.easy.name}_played_$todayKey', true);
+    'word_search_${Difficulty.easy.name}_played_$todayKey',
+    true,
+  );
   await prefs.setBool(
-      'word_search_${Difficulty.medium.name}_played_$todayKey', true);
+    'word_search_${Difficulty.medium.name}_played_$todayKey',
+    true,
+  );
   await prefs.setBool(
-      'word_search_${Difficulty.hard.name}_played_$todayKey', true);
+    'word_search_${Difficulty.hard.name}_played_$todayKey',
+    true,
+  );
 
   // 🔥 Live refresh
   LeaderboardStream().refresh();
 }
+
 String get todayKey {
   final d = DateTime.now();
   return "${d.year}-${d.month}-${d.day}";
@@ -106,10 +112,12 @@ Future<void> saveScoreOnce(Difficulty diff, int score) async {
 /* ───────── MAIN ENTRY ───────── */
 
 void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: DifficultySelectionPage(),
-  ));
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: DifficultySelectionPage(),
+    ),
+  );
 }
 
 /* ───────── DIFFICULTY SELECTION ───────── */
@@ -134,30 +142,6 @@ class _DifficultySelectionPageState extends State<DifficultySelectionPage> {
     Difficulty.medium: 0,
     Difficulty.hard: 0,
   };
-  Future<void> _playWordSearch(Difficulty diff) async {
-    // 🔒 Daily lock
-    if (!await DailyPlayLock.canPlayWordSearch()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Already played today ❌")),
-      );
-      return;
-    }
-
-    // ▶️ Start game
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => WordSearchGameScreen(
-          difficulty: diff,
-          onFinished: (score) async {
-            await saveScoreOnce(diff, score);
-            await _updateScores(diff, score);
-            await DailyPlayLock.markWordSearchPlayed();
-          },
-        ),
-      ),
-    );
-  }
 
   @override
   void initState() {
@@ -189,96 +173,96 @@ class _DifficultySelectionPageState extends State<DifficultySelectionPage> {
     setState(() {});
   }
 
-  Widget difficultyButton(
-      Difficulty diff, String label, Color color) {
+  Widget difficultyButton(Difficulty diff, String label, Color color) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: color.withOpacity(0.15),
         foregroundColor: color,
         padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       ),
       child: Text(label, style: const TextStyle(fontSize: 18)),
       onPressed: () async {
-    final played = await hasPlayed(diff);
+        final played = await hasPlayed(diff);
 
-    if (played) {
-    showDialog(
-    context: context,
-    builder: (_) => const AlertDialog(
-    title: Text("Attempt Used"),
-    content: Text("You already attempted this difficulty."),
-    ),
-    );
-    return;
-    }
-    await showRulesDialog(
-    context: context,
-    title: "Word Search Rules",
-    rules: "Find all the words hidden in the grid. You have 120 seconds. "
-    "The words will be in any shape not only |,__,/.There may be multiple shapes like L,..  ""Each word gives 10 points. Bonus 50 points for finding all words!",
-    onStart:(){
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (_) => WordSearchGameScreen(
-    difficulty: diff,
-    onFinished: (score) async {
-    await saveScoreOnce(diff, score);
-    await _updateScores(diff, score);
-    },
-    ),
-    ),
-    );
-    },
-    );
-    },
+        if (played) {
+          showDialog(
+            context: context,
+            builder: (_) => const AlertDialog(
+              title: Text("Attempt Used"),
+              content: Text("You already attempted this difficulty."),
+            ),
+          );
+          return;
+        }
+        await showRulesDialog(
+          context: context,
+          title: "Word Search Rules",
+          rules:
+              "Find all the words hidden in the grid. You have 120 seconds. "
+              "The words will be in any shape not only |,__,/.There may be multiple shapes like L,..  "
+              "Each word gives 10 points. Bonus 50 points for finding all words!",
+          onStart: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => WordSearchGameScreen(
+                  difficulty: diff,
+                  onFinished: (score) async {
+                    await saveScoreOnce(diff, score);
+                    await _updateScores(diff, score);
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
-        Future<void> showRulesDialog({
+
+  Future<void> showRulesDialog({
     required BuildContext context,
     required String title,
     required String rules,
     VoidCallback? onStart,
-    }) async {
-      return showDialog(
-        context: context,
-        barrierDismissible: false, // forces user to read/start
-        builder: (_) => AlertDialog(
-          title: Text(title),
-          content: Text(rules),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context); // close the dialog
-                if (onStart != null) onStart(); // start the game
-              },
-              child: const Text("Start"),
-            ),
-          ],
-        ),
-      );
-    }
+  }) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false, // forces user to read/start
+      builder: (_) => AlertDialog(
+        title: Text(title),
+        content: Text(rules),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context); // close the dialog
+              if (onStart != null) onStart(); // start the game
+            },
+            child: const Text("Start"),
+          ),
+        ],
+      ),
+    );
+  }
 
-    Widget scoreRow(String title, int best, int last) {
+  Widget scoreRow(String title, int best, int last) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title,
-              style:
-              const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text("Best: $best"),
-              Text("Last: $last",
-                  style: const TextStyle(color: Colors.grey)),
+              Text("Last: $last", style: const TextStyle(color: Colors.grey)),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -296,19 +280,26 @@ class _DifficultySelectionPageState extends State<DifficultySelectionPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 difficultyButton(Difficulty.easy, "Easy", Colors.teal),
-                difficultyButton(
-                    Difficulty.medium, "Medium", Colors.purple),
-                difficultyButton(
-                    Difficulty.hard, "Hard", Colors.redAccent),
+                difficultyButton(Difficulty.medium, "Medium", Colors.purple),
+                difficultyButton(Difficulty.hard, "Hard", Colors.redAccent),
               ],
             ),
             const SizedBox(height: 30),
-            scoreRow("Easy", bestScores[Difficulty.easy]!,
-                lastScores[Difficulty.easy]!),
-            scoreRow("Medium", bestScores[Difficulty.medium]!,
-                lastScores[Difficulty.medium]!),
-            scoreRow("Hard", bestScores[Difficulty.hard]!,
-                lastScores[Difficulty.hard]!),
+            scoreRow(
+              "Easy",
+              bestScores[Difficulty.easy]!,
+              lastScores[Difficulty.easy]!,
+            ),
+            scoreRow(
+              "Medium",
+              bestScores[Difficulty.medium]!,
+              lastScores[Difficulty.medium]!,
+            ),
+            scoreRow(
+              "Hard",
+              bestScores[Difficulty.hard]!,
+              lastScores[Difficulty.hard]!,
+            ),
           ],
         ),
       ),
@@ -329,9 +320,9 @@ class WordSearchGameScreen extends StatefulWidget {
   });
 
   @override
-  State<WordSearchGameScreen> createState() =>
-      _WordSearchGameScreenState();
+  State<WordSearchGameScreen> createState() => _WordSearchGameScreenState();
 }
+
 class DailyPlayLock {
   static Future<bool> canPlayWordSearch() async {
     final prefs = await SharedPreferences.getInstance();
@@ -372,7 +363,6 @@ class _WordSearchGameScreenState extends State<WordSearchGameScreen> {
           foundCount = result.foundWords.length;
           score = _calculateScore();
           _submitScoreAndExit(score, showDialogBox: true);
-
         },
       ),
     );
@@ -383,10 +373,11 @@ class _WordSearchGameScreenState extends State<WordSearchGameScreen> {
     if (foundCount == _words.length) s += 50; // bonus for finding all
     return s;
   }
+
   Future<void> _submitScoreAndExit(
-      int finalScore, {
-        bool showDialogBox = false,
-      }) async {
+    int finalScore, {
+    bool showDialogBox = false,
+  }) async {
     if (_submitted) return;
     _submitted = true;
     _stopwatch.stop();
@@ -459,7 +450,7 @@ class _WordSearchGameScreenState extends State<WordSearchGameScreen> {
         title: const Text("Exit Game? 🤔"),
         content: Text(
           "Words Found: $foundCount / ${_words.length}\n"
-              "Score if you exit now: $currentScore",
+          "Score if you exit now: $currentScore",
         ),
         actions: [
           TextButton(
@@ -479,7 +470,6 @@ class _WordSearchGameScreenState extends State<WordSearchGameScreen> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -496,9 +486,7 @@ class _WordSearchGameScreenState extends State<WordSearchGameScreen> {
             ),
           ],
         ),
-        body: Center(
-          child: GameWidget(game: _game),
-        ),
+        body: Center(child: GameWidget(game: _game)),
       ),
     );
   }

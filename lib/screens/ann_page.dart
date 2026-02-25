@@ -10,16 +10,12 @@ import 'hackathon_list.dart';
 import 'workshop_list.dart';
 import 'club.dart';
 import 'participant_dashboard.dart';
-import 'login_screen.dart';
 import 'home.dart';
 
 class AnnouncementPage extends StatefulWidget {
   final VoidCallback onToggleTheme;
 
-  const AnnouncementPage({
-    super.key,
-    required this.onToggleTheme,
-  });
+  const AnnouncementPage({super.key, required this.onToggleTheme});
 
   @override
   State<AnnouncementPage> createState() => _AnnouncementPageState();
@@ -38,8 +34,9 @@ class _AnnouncementPageState extends State<AnnouncementPage>
   bool _isPrivileged = false;
   bool _loadingAnnouncements = true;
 
-  final CollectionReference _annRef =
-  FirebaseFirestore.instance.collection('announcements');
+  final CollectionReference _annRef = FirebaseFirestore.instance.collection(
+    'announcements',
+  );
 
   List<Announcement> _announcements = [];
 
@@ -90,8 +87,10 @@ class _AnnouncementPageState extends State<AnnouncementPage>
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    final snap =
-    await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+    final snap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
     final role = snap.data()?['role'];
 
     setState(() {
@@ -112,7 +111,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
       final catName = (data['category'] ?? 'notice') as String;
 
       final category = AnnouncementCategory.values.firstWhere(
-            (c) => c.name == catName,
+        (c) => c.name == catName,
         orElse: () => AnnouncementCategory.notice,
       );
 
@@ -165,10 +164,10 @@ class _AnnouncementPageState extends State<AnnouncementPage>
   }
 
   Future<void> _setAnnouncementState(
-      Announcement ann, {
-        bool? archived,
-        bool? read,
-      }) async {
+    Announcement ann, {
+    bool? archived,
+    bool? read,
+  }) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
@@ -178,15 +177,16 @@ class _AnnouncementPageState extends State<AnnouncementPage>
         .collection('announcement_state')
         .doc(ann.id)
         .set({
-      if (archived != null) 'archived': archived,
-      if (read != null) 'read': read,
-    }, SetOptions(merge: true));
+          if (archived != null) 'archived': archived,
+          if (read != null) 'read': read,
+        }, SetOptions(merge: true));
   }
 
   List<Announcement> get _filtered {
     final list = _announcements.where((a) {
-      final matchesSearch =
-      a.title.toLowerCase().contains(_search.toLowerCase());
+      final matchesSearch = a.title.toLowerCase().contains(
+        _search.toLowerCase(),
+      );
       final matchesCategory =
           _filterCategory == null || a.category == _filterCategory;
       return matchesSearch && matchesCategory;
@@ -230,8 +230,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
       if (a.venue.isEmpty) continue;
       final start = _combineAnnouncement(a);
       if (start.isBefore(now)) continue;
-      final end =
-      DateTime(a.date.year, a.date.month, a.date.day, 23, 59);
+      final end = DateTime(a.date.year, a.date.month, a.date.day, 23, 59);
       items.add(
         _VenueBooking(
           source: 'announcement',
@@ -243,8 +242,9 @@ class _AnnouncementPageState extends State<AnnouncementPage>
       );
     }
 
-    final hackSnap =
-    await FirebaseFirestore.instance.collection('hackathons').get();
+    final hackSnap = await FirebaseFirestore.instance
+        .collection('hackathons')
+        .get();
     for (final d in hackSnap.docs) {
       final data = d.data();
       final venue = (data['venue'] ?? '').toString();
@@ -252,8 +252,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
       final deadline = (data['deadline'] as Timestamp).toDate();
       if (deadline.isBefore(now)) continue;
       final start = deadline;
-      final end =
-      DateTime(deadline.year, deadline.month, deadline.day, 23, 59);
+      final end = DateTime(deadline.year, deadline.month, deadline.day, 23, 59);
       items.add(
         _VenueBooking(
           source: 'hackathon',
@@ -265,8 +264,9 @@ class _AnnouncementPageState extends State<AnnouncementPage>
       );
     }
 
-    final wsSnap =
-    await FirebaseFirestore.instance.collection('workshops').get();
+    final wsSnap = await FirebaseFirestore.instance
+        .collection('workshops')
+        .get();
     for (final d in wsSnap.docs) {
       final data = d.data();
       final venue = (data['venue'] ?? '').toString();
@@ -274,8 +274,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
       final deadline = (data['deadline'] as Timestamp).toDate();
       if (deadline.isBefore(now)) continue;
       final start = deadline;
-      final end =
-      DateTime(deadline.year, deadline.month, deadline.day, 23, 59);
+      final end = DateTime(deadline.year, deadline.month, deadline.day, 23, 59);
       items.add(
         _VenueBooking(
           source: 'workshop',
@@ -287,8 +286,9 @@ class _AnnouncementPageState extends State<AnnouncementPage>
       );
     }
 
-    final clubSnap =
-    await FirebaseFirestore.instance.collection('club_events').get();
+    final clubSnap = await FirebaseFirestore.instance
+        .collection('club_events')
+        .get();
     for (final d in clubSnap.docs) {
       final data = d.data();
       final venue = (data['venue'] ?? '').toString();
@@ -330,8 +330,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
       time.hour,
       time.minute,
     );
-    final candidateEnd =
-    DateTime(date.year, date.month, date.day, 23, 59);
+    final candidateEnd = DateTime(date.year, date.month, date.day, 23, 59);
 
     for (final b in _allVenueBookings) {
       if (b.venue.trim().toLowerCase() != venue.trim().toLowerCase()) {
@@ -339,12 +338,12 @@ class _AnnouncementPageState extends State<AnnouncementPage>
       }
 
       if (ignore != null && b.source == 'announcement') {
-        final sameDate = b.from.year == ignore.date.year &&
+        final sameDate =
+            b.from.year == ignore.date.year &&
             b.from.month == ignore.date.month &&
             b.from.day == ignore.date.day;
         final sameVenue =
-            ignore.venue.trim().toLowerCase() ==
-                b.venue.trim().toLowerCase();
+            ignore.venue.trim().toLowerCase() == b.venue.trim().toLowerCase();
         if (sameDate && sameVenue) continue;
       }
 
@@ -355,17 +354,15 @@ class _AnnouncementPageState extends State<AnnouncementPage>
     return false;
   }
 
-  String? _availabilityNote({
-    required String venue,
-    required DateTime date,
-  }) {
+  String? _availabilityNote({required String venue, required DateTime date}) {
     DateTime? lastEnd;
 
     for (final b in _allVenueBookings) {
       if (b.venue.trim().toLowerCase() != venue.trim().toLowerCase()) continue;
       if (b.from.year != date.year ||
           b.from.month != date.month ||
-          b.from.day != date.day) continue;
+          b.from.day != date.day)
+        continue;
 
       if (lastEnd == null || b.to.isAfter(lastEnd)) {
         lastEnd = b.to;
@@ -452,7 +449,8 @@ class _AnnouncementPageState extends State<AnnouncementPage>
         ignore: ann,
       );
       if (conflict) {
-        venueNote = _availabilityNote(venue: venueText, date: date) ??
+        venueNote =
+            _availabilityNote(venue: venueText, date: date) ??
             '$venueText is not available for this date.';
       } else {
         venueNote = null;
@@ -464,8 +462,9 @@ class _AnnouncementPageState extends State<AnnouncementPage>
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text(ann == null ? 'Add Announcement' : 'Edit Announcement'),
           content: SingleChildScrollView(
             child: Column(
@@ -475,7 +474,9 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                   Text(
                     errorMessage!,
                     style: const TextStyle(
-                        color: Colors.red, fontWeight: FontWeight.bold),
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                 ],
@@ -485,8 +486,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                 ),
                 TextField(
                   controller: descCtrl,
-                  decoration:
-                  const InputDecoration(labelText: 'Description'),
+                  decoration: const InputDecoration(labelText: 'Description'),
                   maxLines: 3,
                 ),
                 const SizedBox(height: 8),
@@ -507,10 +507,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                   ),
                   items: [
                     ..._fixedHalls.map(
-                          (h) => DropdownMenuItem(
-                        value: h,
-                        child: Text(h),
-                      ),
+                      (h) => DropdownMenuItem(value: h, child: Text(h)),
                     ),
                     const DropdownMenuItem(
                       value: 'Other hall',
@@ -546,7 +543,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                       selectedHall = prev;
                       venueNote =
                           _availabilityNote(venue: venueText, date: date) ??
-                              '$venueText is already booked for this date.';
+                          '$venueText is already booked for this date.';
                     } else {
                       venueNote = null;
                     }
@@ -594,8 +591,9 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                     final picked = await showDatePicker(
                       context: context,
                       initialDate: date,
-                      firstDate: DateTime.now()
-                          .subtract(const Duration(days: 365)),
+                      firstDate: DateTime.now().subtract(
+                        const Duration(days: 365),
+                      ),
                       lastDate: DateTime(2100),
                     );
                     if (picked != null) {
@@ -623,10 +621,10 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                   items: AnnouncementCategory.values
                       .map(
                         (c) => DropdownMenuItem(
-                      value: c,
-                      child: Text(c.name.toUpperCase()),
-                    ),
-                  )
+                          value: c,
+                          child: Text(c.name.toUpperCase()),
+                        ),
+                      )
                       .toList(),
                   onChanged: (v) {
                     if (v != null) {
@@ -634,8 +632,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                       setDialogState(() {});
                     }
                   },
-                  decoration:
-                  const InputDecoration(labelText: 'Category'),
+                  decoration: const InputDecoration(labelText: 'Category'),
                 ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
@@ -644,9 +641,13 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                   items: const [
                     DropdownMenuItem(value: null, child: Text('None')),
                     DropdownMenuItem(
-                        value: 'hackathon', child: Text('Hackathon')),
+                      value: 'hackathon',
+                      child: Text('Hackathon'),
+                    ),
                     DropdownMenuItem(
-                        value: 'workshop', child: Text('Workshop')),
+                      value: 'workshop',
+                      child: Text('Workshop'),
+                    ),
                     DropdownMenuItem(value: 'club', child: Text('Club Event')),
                   ],
                   onChanged: (v) {
@@ -659,10 +660,10 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                   decoration: const InputDecoration(
                     labelText: 'Target ID (optional)',
                     helperText:
-                    'Paste hackathon/workshop doc id or club event id',
+                        'Paste hackathon/workshop doc id or club event id',
                   ),
                   onChanged: (v) =>
-                  targetId = v.trim().isEmpty ? null : v.trim(),
+                      targetId = v.trim().isEmpty ? null : v.trim(),
                 ),
                 const SizedBox(height: 8),
                 SwitchListTile(
@@ -701,13 +702,14 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                     descCtrl.text.isEmpty ||
                     venueFinal.isEmpty) {
                   setDialogState(
-                          () => errorMessage = 'All fields are required!');
+                    () => errorMessage = 'All fields are required!',
+                  );
                   return;
                 }
                 if (venueNote != null) {
                   setDialogState(
-                        () => errorMessage =
-                    'Selected venue is currently not available for this date.',
+                    () => errorMessage =
+                        'Selected venue is currently not available for this date.',
                   );
                   return;
                 }
@@ -818,23 +820,17 @@ class _AnnouncementPageState extends State<AnnouncementPage>
     if (ann.targetType == 'hackathon') {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (_) => const HackathonListPage(),
-        ),
+        MaterialPageRoute(builder: (_) => const HackathonListPage()),
       );
     } else if (ann.targetType == 'workshop') {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (_) => const WorkshopListPage(),
-        ),
+        MaterialPageRoute(builder: (_) => const WorkshopListPage()),
       );
     } else if (ann.targetType == 'club') {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (_) => const ClubHubHomePage(),
-        ),
+        MaterialPageRoute(builder: (_) => const ClubHubHomePage()),
       );
     }
   }
@@ -856,9 +852,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
           return ListTile(
             leading: const Icon(Icons.inventory_2_outlined),
             title: Text(a.title),
-            subtitle: Text(
-              '${a.date.day}/${a.date.month}/${a.date.year}',
-            ),
+            subtitle: Text('${a.date.day}/${a.date.month}/${a.date.year}'),
             onTap: () {
               Navigator.pop(context);
               setState(() {
@@ -929,9 +923,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: e.value > 1
-                            ? Colors.redAccent
-                            : Colors.black87,
+                        color: e.value > 1 ? Colors.redAccent : Colors.black87,
                       ),
                     );
                   }).toList(),
@@ -979,9 +971,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_loadingAnnouncements) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -990,6 +980,12 @@ class _AnnouncementPageState extends State<AnnouncementPage>
         automaticallyImplyLeading: false,
         titleSpacing: 0,
         backgroundColor: Colors.teal,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: _loadAnnouncements,
+          ),
+        ],
         title: Row(
           children: [
             Builder(
@@ -1052,35 +1048,26 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                   padding: WidgetStateProperty.all(
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   ),
-                  side: WidgetStateProperty.resolveWith(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return const BorderSide(
-                            color: Colors.teal, width: 1.2);
-                      }
-                      return const BorderSide(
-                          color: Colors.grey, width: 0.6);
-                    },
-                  ),
-                  backgroundColor: WidgetStateProperty.resolveWith(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return Colors.teal.withOpacity(0.12);
-                      }
-                      return Theme.of(context).colorScheme.surface;
-                    },
-                  ),
-                  foregroundColor: WidgetStateProperty.resolveWith(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return Colors.teal.shade800;
-                      }
-                      return Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.8);
-                    },
-                  ),
+                  side: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return const BorderSide(color: Colors.teal, width: 1.2);
+                    }
+                    return const BorderSide(color: Colors.grey, width: 0.6);
+                  }),
+                  backgroundColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return Colors.teal.withOpacity(0.12);
+                    }
+                    return Theme.of(context).colorScheme.surface;
+                  }),
+                  foregroundColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return Colors.teal.shade800;
+                    }
+                    return Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.8);
+                  }),
                 ),
                 segments: const [
                   ButtonSegment(
@@ -1094,10 +1081,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                   ButtonSegment(
                     value: 1,
                     icon: Icon(Icons.calendar_month_outlined, size: 18),
-                    label: Text(
-                      'Calendar',
-                      style: TextStyle(fontSize: 13),
-                    ),
+                    label: Text('Calendar', style: TextStyle(fontSize: 13)),
                   ),
                 ],
                 selected: {_currentIndex},
@@ -1112,8 +1096,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
           ),
           if (_currentIndex == 0)
             Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               child: Row(
                 children: [
                   Expanded(flex: 6, child: _searchBar()),
@@ -1129,48 +1112,54 @@ class _AnnouncementPageState extends State<AnnouncementPage>
               switchOutCurve: Curves.easeIn,
               child: _currentIndex == 0
                   ? Column(
-                key: const ValueKey('list'),
-                children: [
-                  if (_isPrivileged) _buildAddAnnouncementHeader(),
-                  _buildTopArchiveStrip(),
-                  Expanded(
-                    child: _filtered.isEmpty
-                        ? const Center(
-                      child: Text('No announcements found'),
+                      key: const ValueKey('list'),
+                      children: [
+                        if (_isPrivileged) _buildAddAnnouncementHeader(),
+                        _buildTopArchiveStrip(),
+                        Expanded(
+                          child: _filtered.isEmpty
+                              ? const Center(
+                                  child: Text('No announcements found'),
+                                )
+                              : ListView.builder(
+                                  controller: _listScrollController,
+                                  padding: const EdgeInsets.fromLTRB(
+                                    12,
+                                    8,
+                                    12,
+                                    80,
+                                  ),
+                                  itemCount: _filtered.length,
+                                  itemBuilder: (_, i) =>
+                                      _announcementCard(_filtered[i]),
+                                ),
+                        ),
+                      ],
                     )
-                        : ListView.builder(
-                      controller: _listScrollController,
-                      padding: const EdgeInsets.fromLTRB(
-                          12, 8, 12, 80),
-                      itemCount: _filtered.length,
-                      itemBuilder: (_, i) =>
-                          _announcementCard(_filtered[i]),
-                    ),
-                  ),
-                ],
-              )
                   : Column(
-                key: const ValueKey('calendar'),
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
-                    child: const Text(
-                      'Here you can view the announcement calendar – a clear snapshot of what is happening and when across your campus.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontStyle: FontStyle.italic,
-                      ),
+                      key: const ValueKey('calendar'),
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          child: const Text(
+                            'Here you can view the announcement calendar – a clear snapshot of what is happening and when across your campus.',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: AnnouncementCalendarPage(
+                            announcements: _announcements,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Expanded(
-                    child: AnnouncementCalendarPage(
-                      announcements: _announcements,
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         ],
@@ -1216,8 +1205,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => const HackathonListPage()),
+                MaterialPageRoute(builder: (_) => const HackathonListPage()),
               );
             },
           ),
@@ -1228,8 +1216,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => const WorkshopListPage()),
+                MaterialPageRoute(builder: (_) => const WorkshopListPage()),
               );
             },
           ),
@@ -1240,8 +1227,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => const ClubHubHomePage()),
+                MaterialPageRoute(builder: (_) => const ClubHubHomePage()),
               );
             },
           ),
@@ -1253,21 +1239,23 @@ class _AnnouncementPageState extends State<AnnouncementPage>
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => const ParticipantDashboard()),
+                MaterialPageRoute(builder: (_) => const ParticipantDashboard()),
               );
             },
           ),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.redAccent),
             title: const Text('Logout'),
-            onTap: () {
+            onTap: () async {
               Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const LoginScreen()),
-              );
+              await FirebaseAuth.instance.signOut();
+              if (context.mounted) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/login',
+                  (route) => false,
+                );
+              }
             },
           ),
         ],
@@ -1306,10 +1294,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
           const Expanded(
             child: Text(
               'Add New Announcement',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
           ElevatedButton(
@@ -1339,8 +1324,11 @@ class _AnnouncementPageState extends State<AnnouncementPage>
       ),
       child: Row(
         children: [
-          const Icon(Icons.inventory_2_rounded,
-              size: 18, color: Colors.deepPurple),
+          const Icon(
+            Icons.inventory_2_rounded,
+            size: 18,
+            color: Colors.deepPurple,
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -1401,10 +1389,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
       child: DropdownButtonHideUnderline(
         child: DropdownButton<AnnouncementCategory?>(
           value: _filterCategory,
-          hint: const Text(
-            'Cat',
-            style: TextStyle(fontSize: 12),
-          ),
+          hint: const Text('Cat', style: TextStyle(fontSize: 12)),
           isExpanded: true,
           iconSize: 18,
           items: [
@@ -1413,7 +1398,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
               child: Text('All', style: TextStyle(fontSize: 12)),
             ),
             ...AnnouncementCategory.values.map(
-                  (c) => DropdownMenuItem<AnnouncementCategory?>(
+              (c) => DropdownMenuItem<AnnouncementCategory?>(
                 value: c,
                 child: Text(
                   c.name.toUpperCase(),
@@ -1485,9 +1470,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
       child: Card(
         elevation: 4,
         margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         child: ExpansionTile(
           leading: Stack(
             clipBehavior: Clip.none,
@@ -1528,11 +1511,9 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: isRead
-                        ? Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .color!
-                        .withOpacity(0.6)
+                        ? Theme.of(
+                            context,
+                          ).textTheme.bodyMedium!.color!.withOpacity(0.6)
                         : Theme.of(context).textTheme.bodyMedium!.color,
                   ),
                 ),
@@ -1547,16 +1528,16 @@ class _AnnouncementPageState extends State<AnnouncementPage>
           subtitle: Text(ann.category.name.toUpperCase()),
           trailing: _isPrivileged
               ? IconButton(
-            icon: Icon(
-              ann.isImportant ? Icons.star : Icons.star_border,
-              color: ann.isImportant ? Colors.orange : null,
-            ),
-            onPressed: () {
-              setState(() {
-                ann.isImportant = !ann.isImportant;
-              });
-            },
-          )
+                  icon: Icon(
+                    ann.isImportant ? Icons.star : Icons.star_border,
+                    color: ann.isImportant ? Colors.orange : null,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      ann.isImportant = !ann.isImportant;
+                    });
+                  },
+                )
               : null,
           children: [
             Padding(
@@ -1570,7 +1551,8 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                   Text(
-                      'Date: ${ann.date.day}/${ann.date.month}/${ann.date.year}'),
+                    'Date: ${ann.date.day}/${ann.date.month}/${ann.date.year}',
+                  ),
                   Text('Time: ${ann.time.format(context)}'),
                   const SizedBox(height: 8),
                   Text(ann.description),
@@ -1609,9 +1591,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                             ? Icons.check_circle
                             : Icons.radio_button_unchecked,
                       ),
-                      label: Text(
-                        isRead ? 'Marked as read' : 'Mark as read',
-                      ),
+                      label: Text(isRead ? 'Marked as read' : 'Mark as read'),
                       onPressed: isRead ? null : () => _markAsRead(ann),
                     ),
                   if (_isPrivileged) ...[
@@ -1621,8 +1601,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                       onPressed: () => _openForm(ann: ann),
                     ),
                     TextButton.icon(
-                      icon: const Icon(Icons.delete_outline,
-                          color: Colors.red),
+                      icon: const Icon(Icons.delete_outline, color: Colors.red),
                       label: const Text(
                         'Delete',
                         style: TextStyle(color: Colors.red),

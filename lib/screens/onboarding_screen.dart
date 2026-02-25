@@ -29,20 +29,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   /* ---------------- 3 computer‑themed slides ---------------- */
   static const _slides = [
     _OnboardPage(
-      image:
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=60',
+      image: 'assets/images/bg_img.jpg',
       title: 'Discover Tech Events',
       desc: 'Hackathons, coding fests and more\nin one central place.',
     ),
     _OnboardPage(
-      image:
-      'https://images.unsplash.com/photo-1535223289827-42f1e9919769?auto=format&fit=crop&w=800&q=60',
+      image: 'assets/images/img.png',
       title: 'Register Instantly',
       desc: 'Join with one tap • QR check‑in •\nNo more paper forms.',
     ),
     _OnboardPage(
-      image:
-      'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=60',
+      image: 'assets/images/login_bg.jpg',
       title: 'Earn Badges & Rewards',
       desc: 'Track streaks, collect points\nand climb the leaderboard.',
     ),
@@ -69,11 +66,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     Navigator.pushReplacementNamed(context, '/login');
   }
 
-  void _goHome() {
-    _timer?.cancel();
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (_) => widget.goToHome()));
-  }
 
   @override
   void dispose() {
@@ -140,9 +132,7 @@ class _OnboardPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24),
                 image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: _net
-                        ? NetworkImage(image)
-                        : AssetImage(image) as ImageProvider))),
+                    image: AssetImage(image)))),
         const SizedBox(height: 40),
         /* Title */
         Text(title,

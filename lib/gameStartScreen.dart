@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'game.dart'; // Import your Game2048 widget
-import 'package:intl/intl.dart';  // For formatting DateTime
 
 class Game2048StartScreen extends StatefulWidget {
   const Game2048StartScreen({super.key});
@@ -50,11 +49,6 @@ class _Game2048StartScreenState extends State<Game2048StartScreen> {
     }
   }
 
-  String get _formattedBestScoreTime {
-    if (bestScoreTime == null) return "Never";
-    return DateFormat('MMM d, yyyy - h:mm a').format(bestScoreTime!);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,9 +65,10 @@ class _Game2048StartScreenState extends State<Game2048StartScreen> {
             const Text(
               'Remarks',
               style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
             const SizedBox(height: 16),
 
@@ -91,7 +86,7 @@ class _Game2048StartScreenState extends State<Game2048StartScreen> {
               style: const TextStyle(fontSize: 18),
             ),
 
-            const SizedBox(height:40),
+            const SizedBox(height: 40),
 
             // Centered Play Now button at bottom
             Center(

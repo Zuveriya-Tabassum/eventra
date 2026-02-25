@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'daily_contest.dart';
 import 'leaderboard.dart';
+
 void main() {
   runApp(const EventraQuizApp());
 }
@@ -13,7 +14,6 @@ class EventraQuizApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       title: 'Eventra Quiz Game',
       theme: ThemeData(
@@ -63,7 +63,11 @@ class _QuizSelectionPageState extends State<QuizSelectionPage> {
     });
   }
 
-  Future<void> _updateQuizStats(String quizType, int score, int timeTaken) async {
+  Future<void> _updateQuizStats(
+    String quizType,
+    int score,
+    int timeTaken,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     if (quizType == 'logic') {
       setState(() {
@@ -109,7 +113,9 @@ class _QuizSelectionPageState extends State<QuizSelectionPage> {
       ),
     );
 
-    if (result != null && result.containsKey('score') && result.containsKey('time')) {
+    if (result != null &&
+        result.containsKey('score') &&
+        result.containsKey('time')) {
       _updateQuizStats(quizType, result['score'], result['time']);
     }
   }
@@ -119,7 +125,9 @@ class _QuizSelectionPageState extends State<QuizSelectionPage> {
       context: context,
       builder: (_) => AlertDialog(
         title: const Text("Quiz Already Attempted"),
-        content: const Text("You have already attempted this quiz.\nYou cannot reattempt."),
+        content: const Text(
+          "You have already attempted this quiz.\nYou cannot reattempt.",
+        ),
         actions: [
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
@@ -154,23 +162,33 @@ class _QuizSelectionPageState extends State<QuizSelectionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title,
-                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _scoreInfo('Current Score', currentScore.toString()),
                 _scoreInfo('Best Score', bestScore.toString()),
-                _scoreInfo('Time', timeTaken == 0 ? '--:--' : formatTime(timeTaken)),
+                _scoreInfo(
+                  'Time',
+                  timeTaken == 0 ? '--:--' : formatTime(timeTaken),
+                ),
               ],
             ),
             const SizedBox(height: 24),
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 36,
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   backgroundColor: attempted ? Colors.grey : Colors.teal,
                 ),
                 onPressed: attempted ? null : onPlay,
@@ -189,8 +207,13 @@ class _QuizSelectionPageState extends State<QuizSelectionPage> {
   Widget _scoreInfo(String label, String value) {
     return Column(
       children: [
-        Text(label.toUpperCase(),
-            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+        Text(
+          label.toUpperCase(),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
+        ),
         const SizedBox(height: 4),
         Text(value, style: const TextStyle(fontSize: 20)),
       ],
@@ -210,11 +233,10 @@ class _QuizSelectionPageState extends State<QuizSelectionPage> {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (_) => const DailyContestPage()),
-                  (route) => false,
+              (route) => false,
             );
           },
         ),
-
       ),
       body: ListView(
         children: [
@@ -255,8 +277,6 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
   List<Map<String, String>> answers = [];
   bool answered = false;
   bool _resultShown = false;
-  late BuildContext _pageContext;
-
 
   AnimationController? _timerController;
   Timer? _countdownTimer;
@@ -266,8 +286,7 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _stopwatch = Stopwatch()
-      ..start();
+    _stopwatch = Stopwatch()..start();
     _startTimer();
   }
 
@@ -279,13 +298,13 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
     _timerController?.dispose();
 
     // 2. Initialize the new controller
-    _timerController = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: remainingTime),
-    )
-      ..addListener(() {
-        setState(() {}); // Required to make the progress bar move
-      });
+    _timerController =
+        AnimationController(
+          vsync: this,
+          duration: Duration(seconds: remainingTime),
+        )..addListener(() {
+          setState(() {}); // Required to make the progress bar move
+        });
 
     _timerController!.forward();
 
@@ -313,7 +332,7 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
     answers.add({
       "question": widget.questions[currentIndex]["q"],
       "selected": selected,
-      "correct": correct
+      "correct": correct,
     });
 
     _timerController?.stop();
@@ -333,10 +352,6 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
       }
     });
   }
-  String get _todayKey {  // ✅ EXACTLY LIKE 2048
-    final now = DateTime.now();
-    return "${now.year}-${now.month}-${now.day}";
-  }
 
   void _showResultDialog(int score, int time) {
     showDialog(
@@ -349,8 +364,7 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Questions Attempted: ${answers.length}/${widget.questions
-                    .length}",
+                "Questions Attempted: ${answers.length}/${widget.questions.length}",
               ),
               const SizedBox(height: 8),
               Text("Score: $score"),
@@ -365,13 +379,13 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
             ],
           ),
           actions: [
-
             /// ✅ REVIEW ANSWERS BUTTON
             ElevatedButton(
               onPressed: () {
-                Navigator
-                    .of(dialogContext, rootNavigator: true)
-                    .pop(); // close summary
+                Navigator.of(
+                  dialogContext,
+                  rootNavigator: true,
+                ).pop(); // close summary
                 _showAnswerReview(); // open review dialog
               },
               child: const Text("Review Correct Answers"),
@@ -389,22 +403,20 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
                 Navigator.of(context, rootNavigator: true).pop();
 
                 // 2️⃣ Close Quiz Page → returns to Selection Page
-                Navigator.of(context).pop({
-                  'score': finalScore,
-                  'time': finalTime,
-                });
+                Navigator.of(
+                  context,
+                ).pop({'score': finalScore, 'time': finalTime});
               },
               child: const Text("Close"),
             ),
-
           ],
         );
       },
     );
   }
+
   void _exitQuiz() async {
-    int finalScore =
-        answers.where((a) => a['selected'] == a['correct']).length;
+    int finalScore = answers.where((a) => a['selected'] == a['correct']).length;
     int finalTime = _stopwatch.elapsed.inSeconds;
 
     // Save progress to SharedPreferences
@@ -435,7 +447,9 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("You attempted ${answers.length}/${widget.questions.length} questions."),
+              Text(
+                "You attempted ${answers.length}/${widget.questions.length} questions.",
+              ),
               const SizedBox(height: 8),
               Text("Score: $finalScore"),
               const SizedBox(height: 8),
@@ -445,7 +459,10 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context, rootNavigator: true).pop(); // Close dialog
+                Navigator.of(
+                  context,
+                  rootNavigator: true,
+                ).pop(); // Close dialog
               },
               child: const Text("Continue Quiz"),
             ),
@@ -465,7 +482,7 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
     );
   }
 
-// Keep the _showAnswerReview as we updated before
+  // Keep the _showAnswerReview as we updated before
   void _showAnswerReview() {
     showDialog(
       context: context,
@@ -516,14 +533,14 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
                 // Close review dialog and quiz page
                 Navigator.of(reviewContext, rootNavigator: true).pop();
 
-                int finalScore =
-                    answers.where((a) => a['selected'] == a['correct']).length;
+                int finalScore = answers
+                    .where((a) => a['selected'] == a['correct'])
+                    .length;
                 int finalTime = _stopwatch.elapsed.inSeconds;
 
-                Navigator.of(context).pop({
-                  'score': finalScore,
-                  'time': finalTime,
-                });
+                Navigator.of(
+                  context,
+                ).pop({'score': finalScore, 'time': finalTime});
               },
               child: const Text("Close"),
             ),
@@ -532,13 +549,15 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
       },
     );
   }
-// Helper to format time
+
+  // Helper to format time
   String _formatTime(int seconds) {
     final Duration d = Duration(seconds: seconds);
     final String min = d.inMinutes.toString().padLeft(2, '0');
     final String sec = (d.inSeconds % 60).toString().padLeft(2, '0');
     return "$min:$sec";
   }
+
   Future<void> _finishQuiz() async {
     if (_resultShown) return;
     _resultShown = true;
@@ -547,19 +566,19 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
     _timerController?.stop();
     _countdownTimer?.cancel();
 
-    int totalScore =
-        answers.where((a) => a['selected'] == a['correct']).length;
+    int totalScore = answers.where((a) => a['selected'] == a['correct']).length;
     int totalTime = _stopwatch.elapsed.inSeconds;
 
     final prefs = await SharedPreferences.getInstance();
 
     // ✅ PLAYER INFO
     final playerId =
-        prefs.getString('playerId') ?? 'guest_${DateTime.now().millisecondsSinceEpoch}';
+        prefs.getString('playerId') ??
+        'guest_${DateTime.now().millisecondsSinceEpoch}';
     final playerName =
         prefs.getString('playerName') ??
-            prefs.getString('displayName') ??
-            'Player';
+        prefs.getString('displayName') ??
+        'Player';
 
     // ✅ SAVE TO DAILY LEADERBOARD
     await DailyContestLeaderboardSectionStateHelper.save(
@@ -574,7 +593,6 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
       _showResultDialog(totalScore, totalTime);
     });
   }
-
 
   @override
   void dispose() {
@@ -599,18 +617,17 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
             tooltip: "Exit Quiz",
             onPressed: _exitQuiz,
           ),
-
         ],
       ),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 600),
-        transitionBuilder: (child, animation) =>
-            SlideTransition(
-              position: Tween(
-                  begin: const Offset(1, 0), end: const Offset(0, 0))
-                  .animate(animation),
-              child: child,
-            ),
+        transitionBuilder: (child, animation) => SlideTransition(
+          position: Tween(
+            begin: const Offset(1, 0),
+            end: const Offset(0, 0),
+          ).animate(animation),
+          child: child,
+        ),
         child: Container(
           key: ValueKey<int>(currentIndex),
           padding: const EdgeInsets.all(20),
@@ -620,9 +637,10 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
               Text(
                 "Question ${currentIndex + 1} of ${widget.questions.length}",
                 style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
               ),
               const SizedBox(height: 10),
               ClipRRect(
@@ -632,19 +650,22 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
                   minHeight: 20,
                   backgroundColor: Colors.grey[300],
                   valueColor: AlwaysStoppedAnimation(
-                      (_timerController?.value ?? 0.0) > 0.66
-                          ? Colors.red
-                          : Colors.green
+                    (_timerController?.value ?? 0.0) > 0.66
+                        ? Colors.red
+                        : Colors.green,
                   ),
                 ),
               ), // <--- FIXED: Added ')' to close ClipRRect
               const SizedBox(height: 15),
-              Text(q['q'],
-                  style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87),
-                  textAlign: TextAlign.center),
+              Text(
+                q['q'],
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 20),
               ...List.generate(q['options'].length, (i) {
                 final opt = q['options'][i];
@@ -653,8 +674,8 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
                 if (answered) {
                   if (opt == q['answer']) {
                     color = Colors.green[300]!;
-                  } else
-                  if (answers.isNotEmpty && opt == answers.last['selected']) {
+                  } else if (answers.isNotEmpty &&
+                      opt == answers.last['selected']) {
                     color = Colors.red[300]!;
                   }
                 }
@@ -686,46 +707,66 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
       ),
     );
   }
-
 }
+
 /// ================= Quiz Data =================
 class QuizData {
   static List<Map<String, dynamic>> logicQuestions = [
     {
       'q':
-      "I speak without a mouth and hear without ears. I have no body, but I come alive with wind.",
+          "I speak without a mouth and hear without ears. I have no body, but I come alive with wind.",
       'options': ['Echo', 'Shadow', 'Wind', 'Fire'],
-      'answer': 'Echo'
+      'answer': 'Echo',
     },
     {
       'q': "The more of this there is, the less you see.",
       'options': ['Light', 'Fog', 'Darkness', 'Rain'],
-      'answer': 'Darkness'
+      'answer': 'Darkness',
     },
     {
       'q': "What has keys but can't open locks?",
       'options': ['Piano', 'Map', 'Door', 'Computer'],
-      'answer': 'Piano'
+      'answer': 'Piano',
     },
     {
       'q': "What has hands but cannot clap?",
       'options': ['Clock', 'Robot', 'Chair', 'Statue'],
-      'answer': 'Clock'
+      'answer': 'Clock',
     },
     {
       'q':
-      "I am always hungry and will die if not fed, but whatever I touch will soon turn red.",
+          "I am always hungry and will die if not fed, but whatever I touch will soon turn red.",
       'options': ['Fire', 'Water', 'Plant', 'Earth'],
-      'answer': 'Fire'
+      'answer': 'Fire',
     },
   ];
 
   static List<Map<String, dynamic>> numberQuestions = [
-    {'q': "Find the next number: 2, 4, 8, 16, ?", 'options': ['20', '32', '24', '18'], 'answer': '32'},
-    {'q': "Find the missing number: 5, 10, 20, ?, 80", 'options': ['30', '40', '35', '50'], 'answer': '40'},
-    {'q': "Find the next number: 1, 1, 2, 3, 5, ?", 'options': ['6', '7', '8', '9'], 'answer': '8'},
-    {'q': "Find the missing number: 9, 7, 5, ?, 1", 'options': ['3', '2', '4', '0'], 'answer': '3'},
-    {'q': "Find the next number: 10, 20, 40, 80, ?", 'options': ['100', '160', '120', '200'], 'answer': '160'},
+    {
+      'q': "Find the next number: 2, 4, 8, 16, ?",
+      'options': ['20', '32', '24', '18'],
+      'answer': '32',
+    },
+    {
+      'q': "Find the missing number: 5, 10, 20, ?, 80",
+      'options': ['30', '40', '35', '50'],
+      'answer': '40',
+    },
+    {
+      'q': "Find the next number: 1, 1, 2, 3, 5, ?",
+      'options': ['6', '7', '8', '9'],
+      'answer': '8',
+    },
+    {
+      'q': "Find the missing number: 9, 7, 5, ?, 1",
+      'options': ['3', '2', '4', '0'],
+      'answer': '3',
+    },
+    {
+      'q': "Find the next number: 10, 20, 40, 80, ?",
+      'options': ['100', '160', '120', '200'],
+      'answer': '160',
+    },
   ];
 
   static List<Map<String, dynamic>> logicQuizShuffled() {

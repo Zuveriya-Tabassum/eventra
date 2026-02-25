@@ -1,0 +1,71 @@
+0)same  registred roll no.  should not have access to register again
+
+1)Refresh button per every page 
+
+2)back arrow shouldn't navigate to app after log out
+
+3)set streak dashboard ui and (can we capture user visit to the app by date based?) inorder to update the streak based on the vsit bcoz present based on login(every user may not login and logout evrytime )
+
+4)annnoucement page
+- set venue
+- if select the venue which is already booked ,then we need to get warning note immediately below input field
+- need list of participants (and details) who read the annoucements as read.
+- need name of the person who created or edited the particcular annoucements .
+
+5)Home page
+- need to get no. of unread annoucemnt count on annocement icon at nav bar
+- when ever a new annoucemnt is created by admin/club head ,that should be get like pop-up msg in app
+- profile photo visibility
+- how to upload gifs from the local instead of online google links
+
+6)Hackathon & Workshop page
+- venue handling
+- Payment QR uploading
+- list of participant and thier details (visible to only admin/clubhead)
+- who created and who last edited the particular hackthn/wrkkshop (visible to only admin/clubhead)
+- how to go from upcoming to ongoing and to completed list
+- how to store payment screen shot data (images)and offline payment data(participants) 
+
+7)Daily Contest
+- evry time new user logins the game should be started from their past progress.
+- how to set enable buttons in admin/clubhed to release the games of different levels each of 15 days
+- check leaderboard corrections
+- once the game have played,it should be unable to play (or can play but score should be changed)
+- based on speed of attempting,attempting first among all(i.e. based on time of attempting) and highest marks scored the leader board should update
+
+8)Club events 
+- events page filter button 
+- every club have unique events page(present all clubs redirecting to same  events page) 
+- add remaining functinolities same as workshop/hackthn
+- admin/clubhead able to edit their own details(profile photo uploading,adding certification of their own club,viewers can send doubts through get in touch,editing deatils)
+
+9)User Dashboards
+- linked to hackthn/workshop/club_events enrolled ,daily contest score and streak
+- no. of enrolled and list of hctkns/workshops/club_events
+
+10)Admin Dashboards
+- everytime new participant/club head register ,need to get request, only aftre accpeted by admin they are able to further login
+- see no. of participants ,clubhead 
+- no. of hcathons/workshops/evnts(with particpant details)
+- leader board of participants
+
+11)ClubHead Dashboard
+- see no. of participants
+- only particular club heads can only see their club progress(should able to see other club details)
+- leader board of participants
+
+12)Annoucement page
+-can able to add images (so that the stalls people at the time of fests can able to present their posters there)
+-in user view: that  posters should be background img of  respective annoucemnt) or(bg or profile pic of that particular annoucement,so taht ust by clicking it usercan see them)
+-check if any add-ons are required
+
+13)Fests page
+-admin/club head can upload images/videos/social media links
+-user can view data of events based on year wise and category wise(like fest yuva,vinayaka chaviti,sankranti,diwal ,christmas, repulic day,independence day,engeering day and others..)
+
+14)what to store /exactly handle in particular firbase console(firbase auth/database)
+
+15)audit history(who edited what and all history)
+ - easy to retrive or check data
+
+16)if poosible add dark/light theme else remove theme toggling

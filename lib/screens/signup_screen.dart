@@ -110,10 +110,10 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   String _routeForRole(String r) => switch (r) {
-    'Admin' => '/home1',
-    'Club Head' => '/home1',
-    'Participant' => '/home1',
-    _ => '/home1',
+    'Admin' => '/home',
+    'Club Head' => '/home',
+    'Participant' => '/home',
+    _ => '/home',
   };
 
   // ---------- UI HELPERS ----------
@@ -178,8 +178,8 @@ class _SignupScreenState extends State<SignupScreen> {
         return Stack(
           fit: StackFit.expand,
           children: [
-            Image.network(
-              'https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=1500&q=80',
+            Image.asset(
+              'assets/images/login_bg.jpg',
               fit: BoxFit.cover,
             ),
             Container(color: Colors.black.withOpacity(.6)),
